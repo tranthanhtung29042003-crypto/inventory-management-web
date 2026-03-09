@@ -51,3 +51,10 @@ def listloguser(request):
     return render(request, "blank_page.html")
 
 
+@login_required
+def edituser(request):
+    if request.method == "GET":
+        listloguser = { "sucsse"}
+        return render(request, "user/user_log_activity.html", {"listuser": listloguser})
+
+    return render(request, "blank_page.html")
