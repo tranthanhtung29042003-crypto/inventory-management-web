@@ -28500,7 +28500,7 @@ dl li {
   -webkit-align-items: center;
   align-items: center;
   white-space: nowrap;
-  padding: 10px 35px 10px 35px;
+  padding: 10px 35px 10px 15px;
   color: #484848;
   -webkit-transition-duration: 0.45s;
   -moz-transition-duration: 0.45s;
