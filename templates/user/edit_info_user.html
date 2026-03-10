@@ -1,58 +1,63 @@
-<div id="editModal" style="display:none; border:1px solid black; padding:20px;">
-    <div class="card">
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="row flex-grow">
+    <div class="col-md-6 grid-margin stretch-card">
+        <div class="card">
                   <div class="card-body">
                     <h4 class="card-title">Default form</h4>
                     <p class="card-description"> Basic form layout </p>
-                    <form  method="POST" action="{% url 'edit_user' %}" class="forms-sample">
+                    <form  method="POST" action="{% url 'user/edit_user' user.id %}" class="forms-sample">
                           {% csrf_token %}
 
                       <div class="form-group">
                         <label for="exampleInputUsername1">Username</label>
-                        <input type="text" class="form-control" id="exampleInputUsername1" placeholder="Username">
+                        <input type="text" class="form-control" id="exampleInputUsername1" value="{{user.username}}" placeholder="Username">
                       </div>
                       <div class="form-group">
                         <label for="exampleInputEmail1">Email address</label>
-                        <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Email">
+                        <input type="email" class="form-control" id="exampleInputEmail1" name="email" value="{{user.email}}" placeholder="Email">
+                      </div>
+                        <div class="form-group">
+                        <label for="Phone">Phone</label>
+                        <input type="text" class="form-control" id="Phone" name="phone" value="{{user.phone}}" placeholder="Phone">
                       </div>
                       <div class="form-group">
                         <label for="exampleInputPassword1">Password</label>
-                        <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+                        <input type="password" class="form-control" id="exampleInputPassword1"  name="password"  placeholder="Password">
                       </div>
                       <div class="form-group">
                         <label for="exampleInputConfirmPassword1">Confirm Password</label>
-                        <input type="password" class="form-control" id="exampleInputConfirmPassword1" placeholder="Password">
+                        <input type="password" class="form-control" id="exampleInputConfirmPassword1" name="confirm_password" value="{{user.confirm_password}}" placeholder="Password">
                       </div>
-                      <div class="form-check form-check-flat form-check-primary">
-                        <label class="form-check-label">
-                          <input type="checkbox" class="form-check-input"> Remember me </label>
+                        <div class="form-group">
+                        <label for="roleuser">Role</label>
+                            <select id="roleuser" class="form-select" name="role">
+
+<option value="ADMIN" {% if user.role == "ADMIN" %}selected{% endif %}>ADMIN</option>
+
+<option value="MANAGER" {% if user.role == "MANAGER" %}selected{% endif %}>MANAGER</option>
+
+<option value="ACCOUNTANT" {% if user.role == "ACCOUNTANT" %}selected{% endif %}>ACCOUNTANT</option>
+
+<option value="STAFF" {% if user.role == "STAFF" %}selected{% endif %}>STAFF</option>
+
+</select>
+
                       </div>
-                       <button type="submit">Save</button>
-        <button type="button" onclick="closeModal()">Cancel</button>
+
+                       <button class="btn btn-secondary" type="submit">Save</button>
+
                       <button class="btn btn-light">Cancel</button>
                     </form>
                   </div>
                 </div>
 
 
-    <h3>Edit User</h3>
-
-    <form method="POST" action="{% url 'edit_user' %}">
-        {% csrf_token %}
-
-        <input type="hidden" id="user_id" name="user_id">
-
-        <label>Username</label>
-        <input type="text" id="username" name="username">
-
-        <label>Email</label>
-        <input type="email" id="email" name="email">
-
-        <label>Phone</label>
-        <input type="text" id="phone" name="phone">
-
-        <br><br>
-
-        <button type="submit">Save</button>
-        <button type="button" onclick="closeModal()">Cancel</button>
-    </form>
 </div>
+
+</div>
+
+
+
+{% endblock %}

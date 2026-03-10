@@ -42,9 +42,21 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'user'
+    'user',
+    'category',
+    'exportorder',
+    'exportorderitem',
+    'importorder',
+    'importorderitem',
+    'product',
+    'productwarehouse',
+    'stockmovement',
+    'supplier',
+    'warehouse'
 ]
 AUTH_USER_MODEL = "user.User"
+LOGIN_URL = "login"
+LOGIN_REDIRECT_URL = "dashboard"
 LOGOUT_REDIRECT_URL = "/login/"
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

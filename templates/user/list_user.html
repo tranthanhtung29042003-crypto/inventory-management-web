@@ -12,7 +12,10 @@
                                       <p class="card-subtitle card-subtitle-dash">Hiện có {{listuser.count}} nhân viên</p>
                                     </div>
                                     <div>
-                                      <button class="btn btn-primary btn-lg text-white mb-0 me-0" type="button"><i class="mdi mdi-account-plus"></i> Thêm thành viên</button>
+                                        <a href="{% url 'user/add_user' %}">
+                                             <button class="btn btn-primary btn-lg text-white mb-0 me-0" type="button"><i class="mdi mdi-account-plus"></i> Thêm thành viên</button>
+                                        </a>
+
                                     </div>
                                   </div>
                                   <div class="table-responsive  mt-1">
@@ -29,7 +32,7 @@
                                           <th>Thông tin liên hệ</th>
                                           <th>Ngày tạo</th>
                                             <th>Ngày thay đổi</th>
-                                          <th>Status</th>
+                                          <th>Action</th>
                                         </tr>
                                       </thead>
                                       <tbody>
@@ -66,10 +69,17 @@
 
       <td>
                                             {{user.updated_at}}
+
                                           </td>
+
                                           <td>
-                                              <button href="{% url 'edit_user' user.id %}" class="btn btn-info" type="edit">Edit</button>
-                                                <button href="{% url 'delete_user' user.id %}" class="btn btn-danger" type="delete">Delete</button>
+                                              <a href="{% url 'user/edit_user' user.id %}">
+                                                    <button  class="btn btn-info" type="edit">Edit</button>
+                                              </a>
+<a href="{% url 'user/delete_user' user.id %}">
+     <button  class="btn btn-danger" type="delete">Delete</button>
+</a>
+
                                           </td>
                                         </tr>
                                         {% endfor %}
@@ -83,5 +93,5 @@
                               </div>
                             </div>
                           </div>
-<script>
 
+{% endblock %}
