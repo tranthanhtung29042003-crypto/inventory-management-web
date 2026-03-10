@@ -2,6 +2,96 @@
 
 {% block content %}
 
-<h1>list user</h1>
+<div class="row flex-grow">
+                            <div class="col-12 grid-margin stretch-card">
+                              <div class="card card-rounded">
+                                <div class="card-body">
+                                  <div class="d-sm-flex justify-content-between align-items-start">
+                                    <div>
+                                      <h4 class="card-title card-title-dash">Danh sách nhân viên</h4>
+                                      <p class="card-subtitle card-subtitle-dash">Hiện có {{listuser.count}} nhân viên</p>
+                                    </div>
+                                    <div>
+                                        <a href="{% url 'user/add_user' %}">
+                                             <button class="btn btn-primary btn-lg text-white mb-0 me-0" type="button"><i class="mdi mdi-account-plus"></i> Thêm thành viên</button>
+                                        </a>
+
+                                    </div>
+                                  </div>
+                                  <div class="table-responsive  mt-1">
+                                    <table class="table select-table">
+                                      <thead>
+                                        <tr>
+                                          <th>
+                                            <div class="form-check form-check-flat mt-0">
+                                              <label class="form-check-label">
+                                                <input type="checkbox" class="form-check-input" aria-checked="false" id="check-all"><i class="input-helper"></i></label>
+                                            </div>
+                                          </th>
+                                          <th>Customer</th>
+                                          <th>Thông tin liên hệ</th>
+                                          <th>Ngày tạo</th>
+                                            <th>Ngày thay đổi</th>
+                                          <th>Action</th>
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+
+                                        {% for user in listuser %}
+  <tr>
+
+                                          <td>
+                                            <div class="form-check form-check-flat mt-0">
+                                              <label class="form-check-label">
+                                                <input type="checkbox" class="form-check-input" aria-checked="false"><i class="input-helper"></i></label>
+                                            </div>
+                                          </td>
+
+
+                                          <td>
+                                            <div class="d-flex ">
+
+                                              <div>
+
+                                                <h6>{{ user.username }}</h6>
+                                                <p>{{user.role}}</p>
+                                              </div>
+                                            </div>
+                                          </td>
+                                          <td>
+
+                                            <h4>{{ user.phone }}</h4>
+                                              <p>{{user.email}}</p>
+                                          </td>
+                                          <td>
+                                            {{user.created_at}}
+                                          </td>
+
+      <td>
+                                            {{user.updated_at}}
+
+                                          </td>
+
+                                          <td>
+                                              <a href="{% url 'user/edit_user' user.id %}">
+                                                    <button  class="btn btn-info" type="edit">Edit</button>
+                                              </a>
+<a href="{% url 'user/delete_user' user.id %}">
+     <button  class="btn btn-danger" type="delete">Delete</button>
+</a>
+
+                                          </td>
+                                        </tr>
+                                        {% endfor %}
+
+
+
+                                      </tbody>
+                                    </table>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
 
 {% endblock %}
