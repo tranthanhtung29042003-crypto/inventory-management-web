@@ -24,6 +24,7 @@ def add_category(request):
         name = request.POST.get("name")
         parent_id = request.POST.get("parent")
         description = request.POST.get("description")
+        code = request.POST.get("code")
 
         parent = None
 
@@ -33,12 +34,13 @@ def add_category(request):
         Category.objects.create(
             name=name,
             parent=parent,
-            description=description
+            description=description,
+            code=code
         )
 
     categories = Category.objects.all()
 
-    return render(request, "category/list_category.html")
+    return render(request, "category/add_new_category.html")
 
 
 
@@ -46,8 +48,6 @@ def add_category(request):
 @login_required
 def delete_category(request, id):
     category = get_object_or_404(Category, id=id)
-    if request.method == "Delete":
-        category.delete()
-        return redirect("listcagegoryview")
 
-    return render(request, "category/list_category.html")
+    category.delete()
+    return redirect("listcagegoryview")
