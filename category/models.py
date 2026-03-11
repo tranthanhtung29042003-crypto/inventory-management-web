@@ -10,7 +10,7 @@ class Category(models.Model):
         blank=True,
         related_name="children"
     )
-
+    code = models.CharField(max_length=10 )
     description = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     def __str__(self):

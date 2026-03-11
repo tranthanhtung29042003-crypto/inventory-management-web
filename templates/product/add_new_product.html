@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="row flex-grow">
+    <div class="col-md-6 grid-margin stretch-card">
+        <div class="card">
+                  <div class="card-body">
+                    <h4 class="card-title"> Thêm nhân viên</h4>
+
+                    <form  method="POST" action="{% url 'add_product' %}" class="forms-sample">
+                          {% csrf_token %}
+
+                      <div class="form-group">
+                        <label for="exampleInputUsername1">Tên</label>
+                        <input type="text" class="form-control" id="exampleInputUsername1" name="name" placeholder="Name">
+                      </div>
+
+
+                        <div class="form-group">
+                        <label for="category">Loại</label>
+                             <select id="category" class="form-select" name="category">
+                            <option value="" >None</option>
+                            {% for category in categories %}
+    <option value="{{ category.id }}">
+                {{ category.name }} - {{category.code}}
+            </option>
+        {% endfor %}
+
+
+
+</select>
+                            <div class="row flex-grow">
+                                <div class="col-md-6 grid-margin stretch-card">
+                                     <div class="form-group">
+                        <label for="import_price">Giá nhập</label>
+                        <input type="number" class="form-control" id="import_price" name="import_price" placeholder="Giá nhập">
+                      </div>
+
+                            </div>
+                    <div class="form-group">
+                        <label for="sell_price">Giá bán</label>
+                        <input type="number" class="form-control" id="sell_price" name="sell_price" placeholder="Giá bán">
+                      </div>
+
+                                       <div class="row flex-grow">
+                                <div class="col-md-6 grid-margin stretch-card">
+                                     <div class="form-group">
+                        <label for="import_price">Số lượng</label>
+                        <input type="number" class="form-control" id="quantity_in_stock" name="quantity_in_stock" placeholder="Sô lượng">
+                      </div>
+
+                            </div>
+                    <div class="form-group">
+                        <label for="min_stock_level">Mức tồn tối thiểu</label>
+                        <input type="number" class="form-control" id="min_stock_level" name="min_stock_level" placeholder="Mức tồn tối thiểu">
+                      </div>
+
+
+
+                       <button class="btn btn-secondary" type="submit">Save</button>
+
+                      <button class="btn btn-light">Cancel</button>
+                    </form>
+                  </div>
+                </div>
+
+
+</div>
+
+</div>
+
+
+
+{% endblock %}
