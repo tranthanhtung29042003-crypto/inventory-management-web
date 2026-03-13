@@ -3,72 +3,91 @@
 {% block content %}
 <div class="row flex-grow">
     <div class="col-md-6 grid-margin stretch-card">
-        <div class="card">
-                  <div class="card-body">
-                    <h4 class="card-title"> Thêm nhân viên</h4>
+  <div class="card">
+    <div class="card-body">
+      <h4 class="card-title">Thêm sản phẩm</h4>
 
-                    <form  method="POST" action="{% url 'add_product' %}" class="forms-sample">
-                          {% csrf_token %}
+      <form method="POST" action="{% url 'add_product' %}" enctype="multipart/form-data" class="forms-sample">
+        {% csrf_token %}
 
-                      <div class="form-group">
-                        <label for="exampleInputUsername1">Tên</label>
-                        <input type="text" class="form-control" id="exampleInputUsername1" name="name" placeholder="Name">
-                      </div>
+        <!-- Name -->
+        <div class="form-group">
+          <label>Tên</label>
+          {{ form.name }}
+        </div>
+
+        <!-- Category -->
+        <div class="form-group">
+          <label>Loại</label>
+          {{ form.category }}
+        </div>
+
+        <div class="row">
+          <!-- Import price -->
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>Giá nhập</label>
+              {{ form.import_price }}
+            </div>
+          </div>
+
+          <!-- Sell price -->
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>Giá bán</label>
+              {{ form.sell_price }}
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <!-- Quantity -->
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>Số lượng</label>
+              {{ form.quantity_in_stock }}
+            </div>
+          </div>
+
+          <!-- Min stock -->
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>Mức tồn tối thiểu</label>
+              {{ form.min_stock_level }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Image upload -->
+        <div class="form-group">
+          <label>Ảnh sản phẩm</label>
+          {{ form.image }}
+
+           <br><br>
+
+            <!-- Preview image -->
+            <img id="preview"
+                 src="{% static 'images/no-image.jpg' %}"
+                 width="150"
+                 style="border:1px solid #ddd;padding:5px;border-radius:5px;">
+        </div>
 
 
-                        <div class="form-group">
-                        <label for="category">Loại</label>
-                             <select id="category" class="form-select" name="category">
-                            <option value="" >None</option>
-                            {% for category in categories %}
-    <option value="{{ category.id }}">
-                {{ category.name }} - {{category.code}}
-            </option>
-        {% endfor %}
+        <button class="btn btn-primary" type="submit">Save</button>
+        <a href="{% url 'product_list' %}" class="btn btn-light">Cancel</a>
 
-
-
-</select>
-                            <div class="row flex-grow">
-                                <div class="col-md-6 grid-margin stretch-card">
-                                     <div class="form-group">
-                        <label for="import_price">Giá nhập</label>
-                        <input type="number" class="form-control" id="import_price" name="import_price" placeholder="Giá nhập">
-                      </div>
-
-                            </div>
-                    <div class="form-group">
-                        <label for="sell_price">Giá bán</label>
-                        <input type="number" class="form-control" id="sell_price" name="sell_price" placeholder="Giá bán">
-                      </div>
-
-                                       <div class="row flex-grow">
-                                <div class="col-md-6 grid-margin stretch-card">
-                                     <div class="form-group">
-                        <label for="import_price">Số lượng</label>
-                        <input type="number" class="form-control" id="quantity_in_stock" name="quantity_in_stock" placeholder="Sô lượng">
-                      </div>
-
-                            </div>
-                    <div class="form-group">
-                        <label for="min_stock_level">Mức tồn tối thiểu</label>
-                        <input type="number" class="form-control" id="min_stock_level" name="min_stock_level" placeholder="Mức tồn tối thiểu">
-                      </div>
-
-
-
-                       <button class="btn btn-secondary" type="submit">Save</button>
-
-                      <button class="btn btn-light">Cancel</button>
-                    </form>
-                  </div>
-                </div>
-
-
+      </form>
+    </div>
+  </div>
+</div>
 </div>
 
-</div>
-
-
-
+<script>
+document.getElementById("id_image").onchange = function(event){
+    const [file] = event.target.files
+    if(file){
+        document.getElementById("preview").src = URL.createObjectURL(file)
+    }
+}
+</script>
 {% endblock %}

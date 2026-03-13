@@ -1,134 +1,154 @@
 {% extends "base.html" %}
 
 {% block content %}
-
 <div class="row flex-grow">
-                            <div class="col-12 grid-margin stretch-card">
-                              <div class="card card-rounded">
-                                <div class="card-body">
-                                  <div class="d-sm-flex justify-content-between align-items-start">
-                                    <div>
-                                      <h4 class="card-title card-title-dash">Danh sách sản phẩm</h4>
-                                      <p class="card-subtitle card-subtitle-dash">Hiện có {{ listproduct.count }} sản phẩm</p>
-                                    </div>
-                                    <div>
-                                        <a href="{% url 'product/add_product' %}">
-                                             <button class="btn btn-primary btn-lg text-white mb-0 me-0" type="button"><i class="mdi mdi-account-plus"></i> Thêm sản phẩm</button>
-                                        </a>
+  <div class="col-12 grid-margin stretch-card">
+    <div class="card card-rounded">
+      <div class="card-body">
 
-                                    </div>
-                                  </div>
-                                  <div class="table-responsive  mt-1">
-                                    <table class="table select-table">
-                                      <thead>
-                                        <tr>
+        <div class="d-sm-flex justify-content-between align-items-center">
+          <div class ="col-md-2">
+            <h4 class="card-title card-title-dash">Danh sách sản phẩm</h4>
+            <p class="card-subtitle card-subtitle-dash">
+              Hiện có {{ listproduct.count }} sản phẩm
+            </p>
+          </div>
+          <form method="GET" class="row col-md-6">
 
+  <!-- Search -->
+  <div class="col-md-6">
+    <input type="text"
+           name="search"
+           class="form-control"
+           placeholder="Tìm kiếm sản phẩm">
+  </div>
 
-                                          <th>Tên</th>
+  <!-- Filter category -->
+  <div class="col-md-4">
+    <select name="category" class="form-select">
 
-                                            <th>Loại</th>
-                                            <th>Đơn vị</th>
-                                          <th>Giá</th>
+      <option value="">-- Lọc theo danh mục --</option>
 
-                                             <th>Số lượng </th>
+      {% for category in categories %}
+      <option value="{{ category.id }}">
+        {{ category.name }}
+      </option>
+      {% endfor %}
 
-                                            <th>Hình ảnh</th>
-                                            <th> Thời gian</th>
-                                          <th>Action</th>
-                                        </tr>
-                                      </thead>
-                                      <tbody>
+    </select>
+  </div>
 
-                                        {% for product in listproduct %}
-  <tr>
+  <div class="col-md-2">
+    <button class="btn btn-primary">Search</button>
+  </div>
 
-
-                                          <td>
-                                            <div class="d-flex ">
-
-                                              <div>
-
-                                                <h5>{{ product.name }}</h5>
-                                                <p>SKU: {product.sku}</p>
-                                              </div>
-                                            </div>
-                                          </td>
-
-      <td>
-
-                                            <h5>{{ product.category.name }}</h5>
-
-                                          </td>
-                                            <td>
-                                            <div class="d-flex ">
-
-                                              <div>
-
-                                                <h5>Nhập: {{product.import_price}}</h5>
-                                                <h5>Nhập: {{product.sell_price}}</h5>
-                                              </div>
-                                            </div>
-                                          </td>
-
-                                     <td>
-                                            <div class="d-flex ">
-
-                                              <div>
-
-                                                <h5>Số lượng: {{ product.quantity_in_stock }}</h5>
-                                                <h5>Mức tồn: {{ product.min_stock_level}}</h5>
-                                              </div>
-                                            </div>
-                                          </td>
-                                        <td>
-                                            <div class="d-flex ">
-
-                                              <div>
-
-                                                <h5>Số lượng: {{ product.quantity_in_stock }}</h5>
-                                                <h5>Mức tồn: {{ product.min_stock_level}}</h5>
-                                              </div>
-                                            </div>
-                                          </td>
-                                        <td>
-                                            <div class="d-flex ">
-
-                                              <div>
-                                                  {{ product.image }}
-                                              </div>
-                                            </div>
-                                          </td>
-                                        <td>
-                                            <div class="d-flex ">
-
-                                              <div>
-
-                                                <h5>Ngày tạo: {{ product.created_at }}</h5>
-                                                <h5>Thay đổi: {{ product.updated_at}}</h5>
-                                              </div>
-                                            </div>
-                                          </td>
-                                          <td>
-                            <a href="{% url 'product/update_product' product.id %}">
-     <button  class="btn btn-danger" type="delete">Delete</button>
-</a>
-<a href="{% url 'product/delete_product' product.id %}">
-     <button  class="btn btn-danger" type="delete">Delete</button>
-</a>
-
-                                          </td>
-                                        </tr>
-                                        {% endfor %}
+</form>
+          <div class="col-md-4 d-sm-flex justify-content-end align-items-end gap-1">
+            <div>
+            <a href="{% url 'add_product' %}">
+              <button class="btn btn-primary btn-md text-white ">
+                <i class="mdi mdi-plus"></i> Thêm sản phẩm
+              </button>
+            </a>
+          </div>
+             <div>
+            <a href="{% url 'export_product_excel' %}">
+              <button class="btn btn-success btn-md text-white ">
+                <i class="mdi mdi-plus"></i> Xuất ra Excel
+              </button>
+            </a>
+          </div>
+          </div>
+        </div>
 
 
 
-                                      </tbody>
-                                    </table>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
+        <div class="table-responsive mt-3">
+          <table class="table select-table">
 
+            <thead>
+              <tr>
+                <th>Tên</th>
+                <th>Loại</th>
+                <th>Giá</th>
+                <th>Tồn kho</th>
+                <th>Hình ảnh</th>
+                <th>Thời gian</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+
+            <tbody>
+
+              {% for product in listproduct %}
+              <tr>
+
+                <!-- Name -->
+                <td>
+                  <div>
+                    <h5>{{ product.name }}</h5>
+                    <p>SKU: {{ product.sku }}</p>
+                  </div>
+                </td>
+
+                <!-- Category -->
+                <td>
+                  <h5>{{ product.category.name }}</h5>
+                </td>
+
+                <!-- Price -->
+                <td>
+                  <h6>Nhập: {{ product.import_price }}</h6>
+                  <h6>Bán: {{ product.sell_price }}</h6>
+                </td>
+
+                <!-- Stock -->
+                <td>
+                  <h6>Số lượng: {{ product.quantity_in_stock }}</h6>
+                  <h6>Mức tồn: {{ product.min_stock_level }}</h6>
+                </td>
+
+                <!-- Image -->
+                <td>
+                  {% if product.image %}
+                    <img src="{{ product.image.url }}" width="60" height="60">
+                  {% else %}
+                    Không có ảnh
+                  {% endif %}
+                </td>
+
+                <!-- Time -->
+                <td>
+                  <small>Tạo: {{ product.created_at|date:"d/m/Y H:i" }}</small><br>
+                  <small>Sửa: {{ product.updated_at|date:"d/m/Y H:i" }}</small>
+                </td>
+
+                <!-- Action -->
+                <td>
+{% if product.quantity_in_stock <= product.min_stock_level %}
+<span class="badge bg-danger">Sắp hết hàng</span>
+{% endif %}
+                  <a href="{% url 'update_product' product.id %}">
+                    <button class="btn btn-warning btn-sm">Edit</button>
+                  </a>
+
+                  <a href="{% url 'delete_product' product.id %}">
+                    <button class="btn btn-danger btn-sm">Delete</button>
+                  </a>
+
+                </td>
+
+              </tr>
+              {% endfor %}
+
+            </tbody>
+
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
 
 {% endblock %}
