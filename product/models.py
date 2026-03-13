@@ -1,5 +1,5 @@
 from django.db import models
-from django.forms import DecimalField
+
 
 from category.models import Category
 
@@ -16,8 +16,9 @@ class Product(models.Model):
     )
 
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    import_price = DecimalField(max_digits=10, decimal_places=2)
+
     sell_price = models.DecimalField(max_digits=10, decimal_places=2)
+    import_price = models.DecimalField(max_digits=10, decimal_places=2)
     quantity_in_stock = models.IntegerField(default=0)
     min_stock_level = models.IntegerField(default=1)
     image = models.ImageField(upload_to="products/")
@@ -31,7 +32,7 @@ class Product(models.Model):
         if not self.sku:
             category_code = self.category.code
 
-            from inventory_management.product.services.make_new_sku import generate_sku
+            from product.services.make_new_sku import generate_sku
             self.sku = generate_sku(category_code)
 
         super().save(*args, **kwargs)
