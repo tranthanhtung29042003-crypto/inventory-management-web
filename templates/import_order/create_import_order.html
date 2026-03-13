@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="row flex-grow">
+<div class="col-md-12 grid-margin stretch-card">
+
+<div class="card">
+<div class="card-body">
+
+<h4 class="card-title">Tạo phiếu nhập kho</h4>
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div class="row">
+
+    <div class="col-md-12">
+        <div class="form-group mb-3">
+            <label>Mã phiếu nhập</label>
+            {{ form.code }}
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="form-group mb-3">
+            <label>Nhà cung cấp</label>
+            {{ form.supplier }}
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="form-group mb-3">
+            <label>Hóa đơn</label>
+            {{ form.invoice_file }}
+        </div>
+    </div>
+
+</div>
+    <div class = "row flex-grow" >
+        <div class ="d-sm-flex justify-content-end align-items-end gap-1">
+            <div class ="col-md-6">
+                <h4>Sản phẩm</h4>
+            </div>
+ <div class ="col-md-6 align-items-center">
+                 <button type="button" id="add-row" class="btn btn-success btn-md text-white ">+ Thêm sản phẩm</button>
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+    {{ formset.management_form }}
+
+    <table class="table" id="item-table">
+        <thead>
+            <tr>
+                <th>Sản phẩm</th>
+                <th>Số lượng</th>
+                <th>Giá </th>
+                <th>Action</th>
+            </tr>
+        </thead>
+
+        <tbody id="formset-body">
+            {% for form in formset %}
+            <tr class="form-row">
+                <td>{{ form.product }}</td>
+                <td>{{ form.quantity }}</td>
+                <td>{{ form.unit_price }}</td>
+                <td>
+                    <button type="button" class="remove-row btn btn-danger">-</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+
+
+    <br><br>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+
+</form>
+</div>
+</div>
+
+</div>
+</div>
+
+
+<script>
+
+document.getElementById("add-row").addEventListener("click", function(){
+
+    let totalForms = document.getElementById("id_form-TOTAL_FORMS");
+
+    let formCount = parseInt(totalForms.value);
+
+    let tableBody = document.getElementById("formset-body");
+
+    let firstRow = document.querySelector(".form-row");
+
+    let newRow = firstRow.cloneNode(true);
+
+    let inputs = newRow.querySelectorAll("input, select");
+
+    inputs.forEach(function(input){
+
+        let name = input.name.replace("-0-", "-" + formCount + "-");
+        let id = input.id.replace("-0-", "-" + formCount + "-");
+
+        input.name = name;
+        input.id = id;
+
+        input.value = "";
+
+    });
+
+    tableBody.appendChild(newRow);
+
+    totalForms.value = formCount + 1;
+
+});
+
+
+
+document.addEventListener("click", function(e){
+
+    if(e.target.classList.contains("remove-row")){
+
+
+        let rows = document.querySelectorAll(".form-row");
+
+        if (rows.length > 1){
+            let row = e.target.closest("tr");
+            row.remove();
+        }
+
+
+    }
+
+});
+
+</script>
+
+{% endblock %}
