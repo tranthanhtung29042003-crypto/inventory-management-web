@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="row">
+<div class="col-md-12 grid-margin stretch-card">
+<div class="card card-rounded">
+<div class="card-body">
+
+<h4 class="card-title">Chi tiết phiếu nhập</h4>
+
+<!-- Order info -->
+
+<div class="row mb-4">
+
+<div class="col-md-4">
+<strong>Mã phiếu:</strong>
+<p>{{ order.code }}</p>
+</div>
+
+<div class="col-md-4">
+<strong>Nhà cung cấp:</strong>
+<p>{{ order.supplier.name }}</p>
+</div>
+
+<div class="col-md-4">
+<strong>Người tạo:</strong>
+<p>{{ order.created_by.username }}</p>
+</div>
+
+<div class="col-md-4">
+<strong>Ngày tạo:</strong>
+<p>{{ order.created_at|date:"d/m/Y H:i" }}</p>
+</div>
+
+<div class="col-md-4">
+<strong>Tổng tiền:</strong>
+<p class="text-success">
+{{ order.total_amount }}
+</p>
+</div>
+
+<div class="col-md-4">
+<strong>Hóa đơn:</strong>
+<p>
+{% if order.invoice_file %}
+<a href="{{ order.invoice_file.url }}" target="_blank">
+Xem file
+</a>
+{% else %}
+Không có
+{% endif %}
+</p>
+</div>
+
+</div>
+
+<!-- Items table -->
+
+<div class="table-responsive">
+
+<table class="table select-table">
+
+<thead>
+<tr>
+<th>Sản phẩm</th>
+<th>Số lượng</th>
+<th>Đơn giá</th>
+<th>Thành tiền</th>
+</tr>
+</thead>
+
+<tbody>
+
+{% for item in order.items.all %}
+
+<tr>
+
+<td>
+{{ item.product.name }}
+</td>
+
+<td>
+{{ item.quantity }}
+</td>
+
+<td>
+{{ item.unit_price }}
+</td>
+
+<td class="text-success">
+{{ item.subtotal }}
+</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+</div>
+
+<!-- Total -->
+
+<div class="text-end mt-3">
+
+<h4>
+Tổng tiền:
+<span class="text-success">
+{{ order.total_amount }}
+</span>
+</h4>
+
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+{% endblock %}
