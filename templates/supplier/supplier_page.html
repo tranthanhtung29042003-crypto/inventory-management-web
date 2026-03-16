@@ -1,10 +1,122 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="row flex-grow">
+                            <div class="col-12 grid-margin stretch-card">
+                              <div class="card card-rounded">
+                                <div class="card-body">
+                                  <div class="d-sm-flex justify-content-between align-items-start">
+                                    <div>
+                                      <h4 class="card-title card-title-dash">Danh sách nhà cung cấp</h4>
+                                      <p class="card-subtitle card-subtitle-dash">Hiện có {{suppliers.count}} nhà cung cấp</p>
+                                    </div>
+
+                                  </div>
+                                    <div class="row flex-grow">
+                                        <div class="col-8 grid-margin stretch-card">
+
+                                             <div class="card-body">
+                                    <table class="table select-table">
+                                      <thead>
+                                        <tr>
+
+                                          <th>Stt</th>
+                                          <th>Tên</th>
+                                            <th>Thông tin liên hệ</th>
+                                          <th>Action</th>
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+
+                                      {% for supplier in suppliers %}
+<tr>
+
+
+
+<td>{{ forloop.counter }}</td>
+
+<td style="max-width:200px; white-space: normal; word-break: break-word;">
+    <h5>{{ supplier.name }}</h5>
+    <h6>{{ supplier.tax_code}}</h6>
+</td>
+
+<td>
+    <h6>Số dt: {{ supplier.phone |default:"Trống"  }}</h6>
+<h6>Email: {{ supplier.email|default:"Trống" }}</h6>
+    <h6>Địa chỉ: {{ supplier.address |default:"Trống"  }}</h6>
+</td>
+
+<td>
+<a href="{% url 'update_supplier' supplier.id %}">
+    <button class="btn btn-info">Update</button>
+</a>
+
+<a href="{% url 'delete_supplier' supplier.id %}">
+    <button class="btn btn-danger">Delete</button>
+</a>
+</td>
+
+</tr>
+{% endfor %}
+
+
+
+                                      </tbody>
+                                    </table>
+                                  </div>
+                                        </div>
+
+                                        <div class="col-4 grid-margin stretch-card">
+<div class="card">
+                  <div class="card-body">
+                    <h4 class="card-title"> Thêm nhà cung cấp</h4>
+
+                    <form  method="POST" action="{% url 'supplier_page' %}" class="forms-sample">
+                          {% csrf_token %}
+
+                      <div class="form-group">
+                        <label for="Name">Tên</label>
+                        <input type="text" class="form-control" id="Name" name="name" placeholder="Tên">
+                      </div>
+
+                        <div class="form-group">
+                        <label for="Phone">Phone</label>
+                        <input type="text" class="form-control" id="Phone" name="phone"  placeholder="Phone">
+                      </div>
+                        <div class="form-group">
+                        <label for="inputTax">Mã số thuế</label>
+                        <input type="text" class="form-control" id="inputTax" name="tax_code" placeholder="tax_code">
+                      </div>
+                        <div class="form-group">
+                        <label for="address">Địa chỉ</label>
+                        <input type="text" class="form-control" id="address" name="address" placeholder="Địa chỉ">
+                      </div>
+                        <div class="form-group">
+                        <label for="exampleInputEmail1">Email address</label>
+                        <input type="email" class="form-control" id="exampleInputEmail1" name="email" placeholder="Email">
+                      </div>
+
+
+
+
+                       <button class="btn btn-secondary" type="submit">Save</button>
+
+
+                    </form>
+                  </div>
+                </div>
+
+
+</div>
+
+
+                                    </div>
+
+
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+{% endblock %}

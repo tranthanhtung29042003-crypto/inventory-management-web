@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 
-from inventory_management.product.models import Product
-from inventory_management.supplier.models import Supplier
+
+from supplier.models import Supplier
 
 
 # Create your views here.
@@ -17,12 +17,12 @@ def supplier_page(request):
         Supplier.objects.create(name=name, phone=phone, email=email, address=address, tax_code=tax_code)
         return redirect("supplier_page")
 
-    return render(request, "supplier/list_supplier.html", {"suppliers": suppliers})
+    return render(request, "supplier/supplier_page.html", {"suppliers": suppliers})
 
 def delete_supplier(request, id):
     supplier = get_object_or_404(Supplier, pk=id)
     supplier.delete()
-    supplier.save()
+
     return redirect("supplier_page")
 
 def update_supplier(request, id):
