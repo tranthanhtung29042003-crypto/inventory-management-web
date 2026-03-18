@@ -1,9 +1,11 @@
 {% extends "base.html" %}
 {% load static %}
-<link rel="stylesheet" href="{% static 'vendors/bootstrap-datepicker/bootstrap-datepicker.min.css' %}">
-<script src="{% static 'vendors/bootstrap-datepicker/bootstrap-datepicker.min.js' %}"></script>
-<script src="{% static 'vendors/jquery/jquery.min.js' %}"></script>
+
 {% block content %}
+
+<!-- Flatpickr CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
 <div class="row flex-grow">
   <div class="col-12 grid-margin stretch-card">
     <div class="card card-rounded">
@@ -13,76 +15,62 @@
         <div class="d-sm-flex justify-content-between align-items-center">
 
           <div class="col-md-3">
-            <h4 class="card-title card-title-dash">Danh sách phiếu nhập</h4>
+            <h4 class="card-title card-title-dash">Danh sách phiếu xuất</h4>
             <p class="card-subtitle card-subtitle-dash">
-              Hiện có {{ import_orders.count }} phiếu nhập
+              Hiện có {{ export_orders.count }} phiếu xuất
             </p>
           </div>
 
           <!-- Search -->
           <form method="GET" class="row col-md-7">
 
-  <!-- Search code -->
-  <div class="col-md-4">
-    <input type="text"
-           name="search"
-           class="form-control"
-           placeholder="Tìm mã phiếu nhập">
-  </div>
+            <!-- Search code -->
+            <div class="col-md-4">
+              <input type="text"
+                     name="search"
+                     class="form-control"
+                     placeholder="Tìm mã phiếu xuất">
+            </div>
 
-  <!-- From date -->
-  <div class="col-md-3 d-none d-lg-block">
-    <div id="datepicker-popup" class="input-group date datepicker navbar-date-picker">
-      <span class="input-group-addon input-group-prepend border-right">
-        <span class="icon-calendar input-group-text calendar-icon"></span>
-      </span>
-      <input type="text"
-             name="from_date"
-             class="form-control"
-             placeholder="Từ ngày">
-    </div>
-  </div>
-            <div class="datepicker datepicker-dropdown dropdown-menu datepicker-orient-right datepicker-orient-bottom" style="top: 67px; left: 617.578px; z-index: 1040; display: block;"><div class="datepicker-days" style=""><table class="table-condensed"><thead><tr><th colspan="7" class="datepicker-title" style="display: none;"></th></tr><tr><th class="prev">«</th><th colspan="5" class="datepicker-switch">March 2026</th><th class="next">»</th></tr><tr><th class="dow">Su</th><th class="dow">Mo</th><th class="dow">Tu</th><th class="dow">We</th><th class="dow">Th</th><th class="dow">Fr</th><th class="dow">Sa</th></tr></thead><tbody><tr><td class="old day" data-date="1771718400000">22</td><td class="old day" data-date="1771804800000">23</td><td class="old day" data-date="1771891200000">24</td><td class="old day" data-date="1771977600000">25</td><td class="old day" data-date="1772064000000">26</td><td class="old day" data-date="1772150400000">27</td><td class="old day" data-date="1772236800000">28</td></tr><tr><td class="day" data-date="1772323200000">1</td><td class="day" data-date="1772409600000">2</td><td class="day" data-date="1772496000000">3</td><td class="day" data-date="1772582400000">4</td><td class="day" data-date="1772668800000">5</td><td class="day" data-date="1772755200000">6</td><td class="day" data-date="1772841600000">7</td></tr><tr><td class="day" data-date="1772928000000">8</td><td class="day" data-date="1773014400000">9</td><td class="day" data-date="1773100800000">10</td><td class="day" data-date="1773187200000">11</td><td class="day" data-date="1773273600000">12</td><td class="today active day" data-date="1773360000000">13</td><td class="day" data-date="1773446400000">14</td></tr><tr><td class="day" data-date="1773532800000">15</td><td class="day" data-date="1773619200000">16</td><td class="day" data-date="1773705600000">17</td><td class="day" data-date="1773792000000">18</td><td class="day" data-date="1773878400000">19</td><td class="day" data-date="1773964800000">20</td><td class="day" data-date="1774051200000">21</td></tr><tr><td class="day" data-date="1774137600000">22</td><td class="day" data-date="1774224000000">23</td><td class="day" data-date="1774310400000">24</td><td class="day" data-date="1774396800000">25</td><td class="day" data-date="1774483200000">26</td><td class="day" data-date="1774569600000">27</td><td class="day" data-date="1774656000000">28</td></tr><tr><td class="day" data-date="1774742400000">29</td><td class="day" data-date="1774828800000">30</td><td class="day" data-date="1774915200000">31</td><td class="new day" data-date="1775001600000">1</td><td class="new day" data-date="1775088000000">2</td><td class="new day" data-date="1775174400000">3</td><td class="new day" data-date="1775260800000">4</td></tr></tbody><tfoot><tr><th colspan="7" class="today" style="display: none;">Today</th></tr><tr><th colspan="7" class="clear" style="display: none;">Clear</th></tr></tfoot></table></div><div class="datepicker-months" style="display: none;"><table class="table-condensed"><thead><tr><th colspan="7" class="datepicker-title" style="display: none;"></th></tr><tr><th class="prev">«</th><th colspan="5" class="datepicker-switch">2026</th><th class="next">»</th></tr></thead><tbody><tr><td colspan="7"><span class="month">Jan</span><span class="month">Feb</span><span class="month focused active">Mar</span><span class="month">Apr</span><span class="month">May</span><span class="month">Jun</span><span class="month">Jul</span><span class="month">Aug</span><span class="month">Sep</span><span class="month">Oct</span><span class="month">Nov</span><span class="month">Dec</span></td></tr></tbody><tfoot><tr><th colspan="7" class="today" style="display: none;">Today</th></tr><tr><th colspan="7" class="clear" style="display: none;">Clear</th></tr></tfoot></table></div><div class="datepicker-years" style="display: none;"><table class="table-condensed"><thead><tr><th colspan="7" class="datepicker-title" style="display: none;"></th></tr><tr><th class="prev">«</th><th colspan="5" class="datepicker-switch">2020-2029</th><th class="next">»</th></tr></thead><tbody><tr><td colspan="7"><span class="year old">2019</span><span class="year">2020</span><span class="year">2021</span><span class="year">2022</span><span class="year">2023</span><span class="year">2024</span><span class="year">2025</span><span class="year active focused">2026</span><span class="year">2027</span><span class="year">2028</span><span class="year">2029</span><span class="year new">2030</span></td></tr></tbody><tfoot><tr><th colspan="7" class="today" style="display: none;">Today</th></tr><tr><th colspan="7" class="clear" style="display: none;">Clear</th></tr></tfoot></table></div><div class="datepicker-decades" style="display: none;"><table class="table-condensed"><thead><tr><th colspan="7" class="datepicker-title" style="display: none;"></th></tr><tr><th class="prev">«</th><th colspan="5" class="datepicker-switch">2000-2090</th><th class="next">»</th></tr></thead><tbody><tr><td colspan="7"><span class="decade old">1990</span><span class="decade">2000</span><span class="decade">2010</span><span class="decade active focused">2020</span><span class="decade">2030</span><span class="decade">2040</span><span class="decade">2050</span><span class="decade">2060</span><span class="decade">2070</span><span class="decade">2080</span><span class="decade">2090</span><span class="decade new">2100</span></td></tr></tbody><tfoot><tr><th colspan="7" class="today" style="display: none;">Today</th></tr><tr><th colspan="7" class="clear" style="display: none;">Clear</th></tr></tfoot></table></div><div class="datepicker-centuries" style="display: none;"><table class="table-condensed"><thead><tr><th colspan="7" class="datepicker-title" style="display: none;"></th></tr><tr><th class="prev">«</th><th colspan="5" class="datepicker-switch">2000-2900</th><th class="next">»</th></tr></thead><tbody><tr><td colspan="7"><span class="century old">1900</span><span class="century active focused">2000</span><span class="century">2100</span><span class="century">2200</span><span class="century">2300</span><span class="century">2400</span><span class="century">2500</span><span class="century">2600</span><span class="century">2700</span><span class="century">2800</span><span class="century">2900</span><span class="century new">3000</span></td></tr></tbody><tfoot><tr><th colspan="7" class="today" style="display: none;">Today</th></tr><tr><th colspan="7" class="clear" style="display: none;">Clear</th></tr></tfoot></table></div></div>
+            <!-- From date -->
+            <div class="col-md-3">
+              <input type="text"
+                     name="from_date"
+                     id="from_date"
+                     class="form-control"
+                     placeholder="Từ ngày">
+            </div>
 
-  <!-- To date -->
+            <!-- To date -->
+            <div class="col-md-3">
+              <input type="text"
+                     name="to_date"
+                     id="to_date"
+                     class="form-control"
+                     placeholder="Đến ngày">
+            </div>
 
-  <div class="col-md-3 d-none d-lg-block">
-    <div id="datepicker-popup" class="input-group date datepicker navbar-date-picker">
-      <span class="input-group-addon input-group-prepend border-right">
-        <span class="icon-calendar input-group-text calendar-icon"></span>
-      </span>
-      <input type="text"
-             name="to_date"
-             class="form-control"
-             placeholder="Đến ngày">
-    </div>
-  </div>
+            <!-- Button -->
+            <div class="col-md-2">
+              <button class="btn btn-primary w-100">Search</button>
+            </div>
 
-  <!-- Button -->
-  <div class="col-md-2">
-    <button class="btn btn-primary w-100">Search</button>
-  </div>
-
-</form>
+          </form>
 
           <!-- Button -->
           <div class="col-md-2 d-sm-flex justify-content-end align-items-end gap-1">
-
             <a href="{% url 'create_import_order' %}">
               <button class="btn btn-primary btn-md text-white">
-                <i class="mdi mdi-plus"></i> Tạo phiếu nhập
+                <i class="mdi mdi-plus"></i> Tạo phiếu xuất
               </button>
             </a>
-
           </div>
 
         </div>
 
         <!-- Table -->
         <div class="table-responsive mt-3">
-
           <table class="table select-table">
-
             <thead>
               <tr>
                 <th>Mã phiếu</th>
@@ -96,53 +84,27 @@
             </thead>
 
             <tbody>
-
               {% for order in import_orders %}
               <tr>
+                <td><h6>{{ order.code }}</h6></td>
+                <td><h6>{{ order.customer_name }}</h6></td>
+                <td><h6 class="text-success">{{ order.total_amount }}</h6></td>
 
-                <!-- Code -->
-                <td>
-                  <h6>{{ order.code }}</h6>
-                </td>
-
-                <!-- Supplier -->
-                <td>
-                  <h6>{{ order.supplier.name }}</h6>
-                </td>
-
-                <!-- Total -->
-                <td>
-                  <h6 class="text-success">
-                    {{ order.total_amount }}
-                  </h6>
-                </td>
-
-                <!-- Invoice -->
                 <td>
                   {% if order.invoice_file %}
-                  <a href="{{ order.invoice_file.url }}" target="_blank">
-                    Xem hóa đơn
-                  </a>
+                  <a href="{{ order.invoice_file.url }}" target="_blank">Xem hóa đơn</a>
                   {% else %}
                   Không có
                   {% endif %}
                 </td>
 
-                <!-- User -->
+                <td><h6>{{ order.created_by.username }}</h6></td>
+
                 <td>
-                  <h6>{{ order.created_by.username }}</h6>
+                  <small>{{ order.created_at|date:"d/m/Y H:i" }}</small>
                 </td>
 
-                <!-- Time -->
                 <td>
-                  <small>
-                    {{ order.created_at|date:"d/m/Y H:i" }}
-                  </small>
-                </td>
-
-                <!-- Action -->
-                <td>
-
                   <a href="{% url 'detail_import_order' order.id %}">
                     <button class="btn btn-info btn-sm">View</button>
                   </a>
@@ -150,35 +112,36 @@
                   <a href="{% url 'delete_import_order' order.id %}">
                     <button class="btn btn-danger btn-sm">Delete</button>
                   </a>
-
                 </td>
 
               </tr>
               {% endfor %}
-
             </tbody>
-
           </table>
-
         </div>
 
       </div>
     </div>
   </div>
 </div>
-<script src="{% static 'vendors/jquery/jquery.min.js' %}"></script>
 
- <script src="{% static 'vendors/bootstrap-datepicker/bootstrap-datepicker.min.js' %}"></script>
-<link rel="stylesheet" href="{% static 'vendors/bootstrap-datepicker/bootstrap-datepicker.min.css' %}">
-<script src="{% static 'vendors/bootstrap-datepicker/bootstrap-datepicker.min.js' %}"></script>
+<!-- JS đặt cuối -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+
 <script>
-$(document).ready(function () {
-  $('.datepicker').datepicker({
-    format: 'yyyy-mm-dd',
-    autoclose: true,
-    todayHighlight: true
-  });
+flatpickr("#from_date", {
+    dateFormat: "Y-m-d",   // gửi về server
+    altInput: true,
+    altFormat: "d-m-Y"     // hiển thị cho user
 });
-</script>}
+
+flatpickr("#to_date", {
+    dateFormat: "Y-m-d",
+    altInput: true,
+    altFormat: "d-m-Y"
+});
+</script>
+
 
 {% endblock %}

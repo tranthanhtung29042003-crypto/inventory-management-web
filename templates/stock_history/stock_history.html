@@ -1,10 +1,123 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<!-- Flatpickr CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+<div class="row flex-grow">
+  <div class="col-12 grid-margin stretch-card">
+    <div class="card card-rounded">
+      <div class="card-body">
+
+        <!-- Header -->
+        <div class="d-sm-flex justify-content-between align-items-center">
+
+          <div class="col-md-3">
+            <h4 class="card-title card-title-dash">Danh sách phiếu xuất</h4>
+            <p class="card-subtitle card-subtitle-dash">
+              Hiện có {{ export_orders.count }} phiếu xuất
+            </p>
+          </div>
+
+          <!-- Search -->
+          <form method="GET" class="row col-md-7">
+
+            <!-- Search code -->
+            <div class="col-md-4">
+              <input type="text"
+                     name="search"
+                     class="form-control"
+                     placeholder="Tìm mã phiếu xuất">
+            </div>
+
+            <!-- From date -->
+            <div class="col-md-3">
+              <input type="text"
+                     name="from_date"
+                     id="from_date"
+                     class="form-control"
+                     placeholder="Từ ngày">
+            </div>
+
+            <!-- To date -->
+            <div class="col-md-3">
+              <input type="text"
+                     name="to_date"
+                     id="to_date"
+                     class="form-control"
+                     placeholder="Đến ngày">
+            </div>
+
+            <!-- Button -->
+            <div class="col-md-2">
+              <button class="btn btn-primary w-100">Search</button>
+            </div>
+
+          </form>
+
+
+
+        </div>
+
+        <!-- Table -->
+        <div class="table-responsive mt-3">
+          <table class="table select-table">
+            <thead>
+              <tr>
+            <th>Sản phẩm</th>
+            <th>Thay đổi</th>
+            <th>Loại</th>
+            <th>Ghi chú</th>
+            <th>Thời gian</th>
+        </tr>
+            </thead>
+
+            <tbody>
+              {% for h in histories %}
+        <tr>
+            <td>{{ h.product.name }}</td>
+
+            <td>
+                {% if h.change > 0 %}
+                    <span style="color:green;">+{{ h.change }}</span>
+                {% else %}
+                    <span style="color:red;">{{ h.change }}</span>
+                {% endif %}
+            </td>
+
+            <td>{{ h.get_action_display }}</td>
+            <td>{{ h.note }}</td>
+            <td>{{ h.created_at }}</td>
+        </tr>
+        {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- JS đặt cuối -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+
+<script>
+flatpickr("#from_date", {
+    dateFormat: "Y-m-d",   // gửi về server
+    altInput: true,
+    altFormat: "d-m-Y"     // hiển thị cho user
+});
+
+flatpickr("#to_date", {
+    dateFormat: "Y-m-d",
+    altInput: true,
+    altFormat: "d-m-Y"
+});
+</script>
+
+
+{% endblock %}

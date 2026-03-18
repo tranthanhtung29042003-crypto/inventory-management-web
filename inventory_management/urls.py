@@ -29,6 +29,9 @@ urlpatterns = [
     path("",include("supplier.urls")),
 
     path("importorder/", include("importorder.urls")),
+    path("exportorder/", include("exportorder.urls")),
+    path("stockhistory/", include("stockmovement.urls")),
+path("warehouse/", include("warehouse.urls")),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

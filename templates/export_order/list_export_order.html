@@ -1,10 +1,141 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<!-- Flatpickr CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+<div class="row flex-grow">
+  <div class="col-12 grid-margin stretch-card">
+    <div class="card card-rounded">
+      <div class="card-body">
+
+        <!-- Header -->
+        <div class="d-sm-flex justify-content-between align-items-center">
+
+          <div class="col-md-3">
+            <h4 class="card-title card-title-dash">Danh sách phiếu xuất</h4>
+            <p class="card-subtitle card-subtitle-dash">
+              Hiện có {{ export_orders.count }} phiếu xuất
+            </p>
+          </div>
+
+          <!-- Search -->
+          <form method="GET" class="row col-md-7">
+
+            <!-- Search code -->
+            <div class="col-md-4">
+              <input type="text"
+                     name="search"
+                     class="form-control"
+                     placeholder="Tìm mã phiếu xuất">
+            </div>
+
+            <!-- From date -->
+            <div class="col-md-3">
+              <input type="text"
+                     name="from_date"
+                     id="from_date"
+                     class="form-control"
+                     placeholder="Từ ngày">
+            </div>
+
+            <!-- To date -->
+            <div class="col-md-3">
+              <input type="text"
+                     name="to_date"
+                     id="to_date"
+                     class="form-control"
+                     placeholder="Đến ngày">
+            </div>
+
+            <!-- Button -->
+            <div class="col-md-2">
+              <button class="btn btn-primary w-100">Search</button>
+            </div>
+
+          </form>
+
+          <!-- Button -->
+          <div class="col-md-2 d-sm-flex justify-content-end align-items-end gap-1">
+            <a href="{% url 'create_export_order' %}">
+              <button class="btn btn-primary btn-md text-white">
+                <i class="mdi mdi-plus"></i> Tạo phiếu xuất
+              </button>
+            </a>
+          </div>
+
+        </div>
+
+        <!-- Table -->
+        <div class="table-responsive mt-3">
+          <table class="table select-table">
+            <thead>
+              <tr>
+                <th>Mã phiếu</th>
+                <th>Khách hàng</th>
+                <th>Tổng tiền</th>
+
+                <th>Người tạo</th>
+                <th>Thời gian</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {% for order in export_orders %}
+              <tr>
+                <td><h6>{{ order.code }}</h6></td>
+                <td><h6>{{ order.customer_name  }}</h6></td>
+                <td><h6 class="text-success">{{ order.total_amount }}</h6></td>
+
+
+
+                <td><h6>{{ order.created_by.username }}</h6></td>
+
+                <td>
+                  <small>{{ order.created_at|date:"d/m/Y H:i" }}</small>
+                </td>
+
+                <td>
+                  <a href="{% url 'detail_export_order' order.id %}">
+                    <button class="btn btn-info btn-sm">View</button>
+                  </a>
+
+                  <a href="{% url 'delete_export_order' order.id %}">
+                    <button class="btn btn-danger btn-sm">Delete</button>
+                  </a>
+                </td>
+
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- JS đặt cuối -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+
+<script>
+flatpickr("#from_date", {
+    dateFormat: "Y-m-d",   // gửi về server
+    altInput: true,
+    altFormat: "d-m-Y"     // hiển thị cho user
+});
+
+flatpickr("#to_date", {
+    dateFormat: "Y-m-d",
+    altInput: true,
+    altFormat: "d-m-Y"
+});
+</script>
+
+
+{% endblock %}

@@ -2,14 +2,14 @@ from datetime import datetime
 from django.apps import apps
 
 
-def generate_importoder_code():
+def generate_exportoder_code():
 
-    ImportOrder = apps.get_model('importorder', 'ImportOrder')
+    ExportOrder = apps.get_model('exportorder', 'ExportOrder')
 
     today = datetime.now().strftime("%Y%m%d")
 
-    count = ImportOrder.objects.filter(
-        code__startswith=f"IMP-{today}"
+    count = ExportOrder.objects.filter(
+        code__startswith=f"EXP-{today}"
     ).count() + 1
 
-    return f"IMP-{today}-{count:03d}"
+    return f"EXP-{today}-{count:03d}"

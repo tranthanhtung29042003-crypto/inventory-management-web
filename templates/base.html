@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="{% static 'vendors/simple-line-icons/css/simple-line-icons.css' %}">
     <link rel="stylesheet" href="{% static 'vendors/css/vendor.bundle.base.css' %}">
     <link rel="stylesheet" href="{% static 'vendors/bootstrap-datepicker/bootstrap-datepicker.min.css' %}">
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
     <!-- endinject -->
     <!-- Plugin css for this page -->
     <link rel="stylesheet" href="{% static 'vendors/datatables.net-bs4/dataTables.bootstrap4.css' %}">
@@ -243,20 +244,24 @@
               </div>
             </li>
 <li class="nav-item">
-              <a class="nav-link" data-bs-toggle="collapse" href="#ui-basic1" aria-expanded="false" aria-controls="ui-basic">
+              <a class="nav-link" data-bs-toggle="collapse" href="#ui-basic2" aria-expanded="false" aria-controls="ui-basic">
                 <i class="menu-icon mdi mdi-floor-plan"></i>
-                <span class="menu-title">Quản lý nhập kho</span>
+                <span class="menu-title">Quản lý kho</span>
                 <i class="menu-arrow"></i>
               </a>
-              <div class="collapse" id="ui-basic1">
+              <div class="collapse" id="ui-basic2">
                 <ul class="nav flex-column sub-menu">
+                   <li class="nav-item"> <a class="nav-link" href="{% url 'warehouse_page' %}">Danh sách kho</a></li>
+
                   <li class="nav-item"> <a class="nav-link" href="{% url 'importorder_list' %}">Danh sách nhập kho</a></li>
+                  <li class="nav-item"> <a class="nav-link" href="{% url 'export_order_list' %}">Danh sách xuất kho</a></li>
 
 
 
                 </ul>
               </div>
             </li>
+
           </ul>
         </nav>
         <!-- partial -->
