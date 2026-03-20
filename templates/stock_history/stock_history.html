@@ -15,9 +15,9 @@
         <div class="d-sm-flex justify-content-between align-items-center">
 
           <div class="col-md-3">
-            <h4 class="card-title card-title-dash">Danh sách phiếu xuất</h4>
+            <h4 class="card-title card-title-dash">Danh sách phiếu </h4>
             <p class="card-subtitle card-subtitle-dash">
-              Hiện có {{ export_orders.count }} phiếu xuất
+              Hiện có {{ histories.count }} phiếu
             </p>
           </div>
 
@@ -80,12 +80,14 @@
             <td>{{ h.product.name }}</td>
 
             <td>
-                {% if h.change > 0 %}
-                    <span style="color:green;">+{{ h.change }}</span>
-                {% else %}
-                    <span style="color:red;">{{ h.change }}</span>
-                {% endif %}
-            </td>
+    {% if h.stock_history == "IMPORT" %}
+        <span style="color:green;">IMPORT</span>
+    {% elif h.stock_history == "EXPORT" %}
+        <span style="color:red;">EXPORT</span>
+    {% elif h.stock_history == "ADJUST" %}
+        <span style="color:orange;">ADJUST</span>
+    {% endif %}
+</td>
 
             <td>{{ h.get_action_display }}</td>
             <td>{{ h.note }}</td>

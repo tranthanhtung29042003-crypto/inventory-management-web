@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.conf import settings
@@ -13,6 +14,9 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 
+from product.models import Product
+from stockmovement.models import StockMovement
+
 font_path = os.path.join(settings.BASE_DIR, 'assets/fonts/Roboto/Roboto-Regular.ttf')
 
 
@@ -27,18 +31,51 @@ def create_import_order(request):
 
         if form.is_valid() and formset.is_valid():
 
-            import_order = form.save(commit=False)
-            import_order.created_by = request.user
-            import_order.save()
+            try:
+                with transaction.atomic():
 
-            items = formset.save(commit=False)
+                    import_order = form.save(commit=False)
+                    import_order.created_by = request.user
+                    import_order.save()
 
-            for item in items:
-                item.import_order = import_order
-                item.save()
+                    total_amount = 0
 
-            return redirect("importorder_list")
+                    warehouse = import_order.warehouse
 
+                    items = formset.save(commit=False)
+
+                    for item in items:
+                        item.import_order = import_order
+                        item.save()
+
+                        total_amount += item.quantity * item.price
+
+                        pw, created = Product.objects.get_or_create(
+                            product=item.product,
+                            warehouse=warehouse,
+                            defaults={"quantity":0}
+                        )
+                        pw.quantity_in_stock += item.quantity
+                        pw.save()
+
+                        StockMovement.objects.create(
+                            product=item.product,
+                            warehouse=  warehouse,
+                            quantity=item.quantity,
+                            type="IMPORT"
+                        )
+
+                        import_order.total_amount += total_amount
+                        import_order.save()
+
+                        for obj in formset.deleted_forms:
+                            obj.delete()
+
+
+
+                    return redirect("importorder_list")
+            except Exception as e:
+                print(e)
     else:
         form = ImportOrderForm()
         formset = ImportOrderItemFormSet(queryset=ImportOrderItem.objects.none())

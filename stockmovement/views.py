@@ -1,4 +1,5 @@
-from django.shortcuts import render, redirect
+from django.db import transaction
+from django.shortcuts import render, redirect, get_object_or_404
 
 from product.models import Product
 from stockmovement.models import StockMovement
@@ -6,39 +7,47 @@ from stockmovement.models import StockMovement
 
 # Create your views here.
 
-def stock_history(request, id):
+def stock_history(request):
     histories = StockMovement.objects.select_related('product').order_by('-created_at')
-    return render(request, 'stock_history.html', {'histories': histories})
+    return render(request, 'stock_history/stock_history.html', {'histories': histories})
 
 
 def import_product(request, id):
-    product = Product.objects.get(id=id)
-    qty = int(request.POST.get('qty'))
+    product = get_object_or_404(Product, id=id)
+    qty = int(request.POST.get('qty', 0))
 
-    product.quantity_in_stock += qty
-    product.save()
+    handle_stock(product, qty, 'IMPORT')
 
-    StockMovement.objects.create(
-        product=product,
-        qty=qty,
-        movement_type = 'IMPORT',
-        note = "Nhập kho",
-
-    )
-    return redirect('')
+    return redirect('product_detail', id=id)
 
 def export_product(request, id):
-    product = Product.objects.get(id=id)
-    qty = int(request.POST.get('qty'))
+    product = get_object_or_404(Product, id=id)
+    qty = int(request.POST.get('qty', 0))
 
-    product.quantity_in_stock += qty
-    product.save()
+    try:
+        handle_stock(product, qty, 'EXPORT')
+    except ValueError:
+        return render(request, 'error.html', {
+            'message': 'Không đủ hàng'
+        })
 
-    StockMovement.objects.create(
-        product=product,
-        qty=qty,
-        movement_type = 'EXPORT',
-        note = "Xuất kho",
+    return redirect('product_detail', id=id)
 
-    )
-    return redirect('')
+def handle_stock(product, qty, movement_type):
+    with transaction.atomic():
+
+        if movement_type == 'IMPORT':
+            product.quantity_in_stock += qty
+
+        elif movement_type == 'EXPORT':
+            if product.quantity_in_stock < qty:
+                raise ValueError("Không đủ tồn kho")
+            product.quantity_in_stock -= qty
+
+        product.save()
+
+        StockMovement.objects.create(
+            product=product,
+            qty=qty,
+            movement_type=movement_type
+        )

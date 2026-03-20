@@ -97,10 +97,27 @@
                 </td>
 
                 <!-- Price -->
+
                 <td>
-                  <h6>Nhập: {{ product.import_price }}</h6>
-                  <h6>Bán: {{ product.sell_price }}</h6>
-                </td>
+
+                  {% load humanize %}
+
+<td>
+    <div>
+        Nhập:
+        <strong>
+            {{ product.import_price|intcomma}} đ
+        </strong>
+    </div>
+    <div>
+        Bán:
+        <strong>
+            {{ product.sell_price|intcomma }} đ
+        </strong>
+    </div>
+</td>
+
+</td>
 
                 <!-- Stock -->
                 <td>
