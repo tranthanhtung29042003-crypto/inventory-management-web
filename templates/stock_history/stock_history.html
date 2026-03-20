@@ -15,9 +15,9 @@
         <div class="d-sm-flex justify-content-between align-items-center">
 
           <div class="col-md-3">
-            <h4 class="card-title card-title-dash">Danh sách phiếu xuất</h4>
+            <h4 class="card-title card-title-dash">Danh sách phiếu </h4>
             <p class="card-subtitle card-subtitle-dash">
-              Hiện có {{ export_orders.count }} phiếu xuất
+              Hiện có {{ histories.count }} phiếu
             </p>
           </div>
 
@@ -57,14 +57,7 @@
 
           </form>
 
-          <!-- Button -->
-          <div class="col-md-2 d-sm-flex justify-content-end align-items-end gap-1">
-            <a href="{% url 'create_import_order' %}">
-              <button class="btn btn-primary btn-md text-white">
-                <i class="mdi mdi-plus"></i> Tạo phiếu xuất
-              </button>
-            </a>
-          </div>
+
 
         </div>
 
@@ -73,49 +66,34 @@
           <table class="table select-table">
             <thead>
               <tr>
-                <th>Mã phiếu</th>
-                <th>Nhà cung cấp</th>
-                <th>Tổng tiền</th>
-                <th>Hóa đơn</th>
-                <th>Người tạo</th>
-                <th>Thời gian</th>
-                <th>Action</th>
-              </tr>
+            <th>Sản phẩm</th>
+            <th>Thay đổi</th>
+            <th>Loại</th>
+            <th>Ghi chú</th>
+            <th>Thời gian</th>
+        </tr>
             </thead>
 
             <tbody>
-              {% for order in import_orders %}
-              <tr>
-                <td><h6>{{ order.code }}</h6></td>
-                <td><h6>{{ order.customer_name }}</h6></td>
-                <td><h6 class="text-success">{{ order.total_amount }}</h6></td>
+              {% for h in histories %}
+        <tr>
+            <td>{{ h.product.name }}</td>
 
-                <td>
-                  {% if order.invoice_file %}
-                  <a href="{{ order.invoice_file.url }}" target="_blank">Xem hóa đơn</a>
-                  {% else %}
-                  Không có
-                  {% endif %}
-                </td>
+            <td>
+    {% if h.stock_history == "IMPORT" %}
+        <span style="color:green;">IMPORT</span>
+    {% elif h.stock_history == "EXPORT" %}
+        <span style="color:red;">EXPORT</span>
+    {% elif h.stock_history == "ADJUST" %}
+        <span style="color:orange;">ADJUST</span>
+    {% endif %}
+</td>
 
-                <td><h6>{{ order.created_by.username }}</h6></td>
-
-                <td>
-                  <small>{{ order.created_at|date:"d/m/Y H:i" }}</small>
-                </td>
-
-                <td>
-                  <a href="{% url 'detail_import_order' order.id %}">
-                    <button class="btn btn-info btn-sm">View</button>
-                  </a>
-
-                  <a href="{% url 'delete_import_order' order.id %}">
-                    <button class="btn btn-danger btn-sm">Delete</button>
-                  </a>
-                </td>
-
-              </tr>
-              {% endfor %}
+            <td>{{ h.get_action_display }}</td>
+            <td>{{ h.note }}</td>
+            <td>{{ h.created_at }}</td>
+        </tr>
+        {% endfor %}
             </tbody>
           </table>
         </div>

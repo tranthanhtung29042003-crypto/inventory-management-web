@@ -1,12 +1,12 @@
 from django import forms
 from product.models import Product
+from category.models import Category  # 👈 thêm dòng này
 
 
 class ProductForm(forms.ModelForm):
 
     class Meta:
         model = Product
-
         fields = "__all__"
 
         widgets = {
@@ -18,6 +18,23 @@ class ProductForm(forms.ModelForm):
             "min_stock_level": forms.NumberInput(attrs={"class": "form-control"}),
             "image": forms.FileInput(attrs={"class": "form-control"}),
         }
+
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        categories = Category.objects.all().order_by('tree_id', 'lft')
+
+        choices = [('', '-- Chọn danh mục --')]
+
+        for c in categories:
+
+            parent_code = c.parent.code if c.parent else ""
+            indent = '—' * c.level  # 👈 indent theo level
+            choices.append((c.id, f"{ parent_code  } {indent} {c.name} - {c.code}"))
+
+        self.fields['category'].choices = choices
+
 
     def clean(self):
         cleaned_data = super().clean()

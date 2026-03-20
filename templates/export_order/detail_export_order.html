@@ -30,8 +30,10 @@
 </div>
 
 <div class="col-md-4">
-<strong>Nhà cung cấp:</strong>
-<p>{{ order.supplier.name }}</p>
+<strong>Khách hàng:</strong>
+<p>
+    {{ order.customer_name}}
+</p>
 </div>
 
 <div class="col-md-4">
@@ -44,32 +46,16 @@
 <p>{{ order.created_at|date:"d/m/Y H:i" }}</p>
 </div>
 
-<div class="col-md-4">
-<strong>Tổng tiền:</strong>
-<p class="text-success">
-{{ order.total_amount }}
-</p>
-</div>
 
-<div class="col-md-4">
-<strong>Hóa đơn:</strong>
-<p>
-{% if order.invoice_file %}
-<a href="{{ order.invoice_file.url }}" target="_blank">
-Xem file
-</a>
-{% else %}
-Không có
-{% endif %}
-</p>
-</div>
+
+
 
 </div>
 
-<!-- Items table -->
+
 
 <div class="table-responsive">
-
+<h2>Chi tiết sản phẩm</h2>
 <table class="table select-table">
 
 <thead>
@@ -125,6 +111,18 @@ Tổng tiền:
 </h4>
 
 </div>
+
+    <!-- Items table -->
+{% if order.note %}
+<div class="row mb-4">
+  <div class="p-3 border rounded">
+    <small class="text-muted">Ghi chú:</small>
+    <p class="mb-0 fw-semibold">
+      {{ order.note }}
+    </p>
+  </div>
+</div>
+{% endif %}
 
 </div>
 </div>

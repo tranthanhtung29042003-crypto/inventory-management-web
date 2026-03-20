@@ -10,7 +10,7 @@ from .models import Category
 @login_required
 def listcagegoryview(request):
     if request.method == "GET":
-        listcategory = Category.objects.all()
+        listcategory = Category.objects.all().order_by('parent_id', 'id')
         return render(request, "category/list_category.html", {"listcategory": listcategory})
 
 
@@ -40,7 +40,7 @@ def add_category(request):
 
     categories = Category.objects.all()
 
-    return render(request, "category/add_new_category.html")
+    return render(request, "category/add_new_category.html", {"categories": categories})
 
 
 
@@ -50,4 +50,4 @@ def delete_category(request, id):
     category = get_object_or_404(Category, id=id)
 
     category.delete()
-    return redirect("listcagegoryview")
+    return redirect("listcategoryview")

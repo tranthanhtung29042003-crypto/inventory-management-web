@@ -23,7 +23,7 @@
                                       <thead>
                                         <tr>
 
-                                          <th>Id</th>
+
                                           <th>Tên</th>
                                              <th>Code</th>
                                             <th>Mô tả</th>
@@ -35,59 +35,44 @@
                                       </thead>
                                       <tbody>
 
-                                        {% for category in listcategory %}
-  <tr>
+                                        {% load mptt_tags %}
+
+<tbody>
+{% recursetree listcategory %}
+<tr>
 
 
-                                          <td>
-                                            <div class="d-flex ">
+    <td style="padding-left: {{ node.level|add:1 }}rem;">
+        <h5>
+        {% if node.parent %}
+    {{ node.parent.code }}
+{% endif %}
+        {% if node.level > 0 %}
+            --
+        {% endif %}
 
-                                              <div>
+        {{ node.name }}
+        </h5>
 
-                                                <h5>{{ category.id }}</h5>
+    </td>
 
-                                              </div>
-                                            </div>
-                                          </td>
-                                          <td>
+    <td>{{ node.code }}</td>
+    <td>{{ node.description }}</td>
+    <td>{{ node.parent }}</td>
+    <td>{{ node.created_at }}</td>
 
-                                            <h5>{{ category.name }}</h5>
+    <td>
+        <a href="{% url 'category/delete_category' node.id %}">
+            <button class="btn btn-danger">Delete</button>
+        </a>
+    </td>
+</tr>
 
-                                          </td>
-      <td>
-
-                                            <h5>{{ category.code }}</h5>
-
-                                          </td>
-      <td>
-
-                                            <h5>{{ category.description }}</h5>
-
-                                          </td>
-                                          <td>
-                                              <h5>
-                                                   {{category.parent}}
-                                              </h5>
-
-                                          </td>
-
-      <td>
-          <h5>
-                 {{category.created_at}}
-          </h5>
-
-
-                                          </td>
-
-                                          <td>
-
-<a href="{% url 'category/delete_category' category.id %}">
-     <button  class="btn btn-danger" type="delete">Delete</button>
-</a>
-
-                                          </td>
-                                        </tr>
-                                        {% endfor %}
+{% if not node.is_leaf_node %}
+    {{ children }}
+{% endif %}
+{% endrecursetree %}
+</tbody>
 
 
 

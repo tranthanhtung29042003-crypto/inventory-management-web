@@ -11,7 +11,7 @@
 <h4 class="card-title">Cập nhật nhà cung cấp</h4>
 
 <form method="POST"
-      action="{% url 'update_supplier' update_supplier.id %}"
+      action="{% url 'update_supplier' supplier.id %}"
       enctype="multipart/form-data"
       class="forms-sample">
 
@@ -26,110 +26,58 @@
        class="form-control">
 </div>
 
-<!-- Category -->
-<div class="form-group">
-<label>Loại</label>
-
-<select name="category" class="form-control">
-
-{% for category in categories %}
-
-<option value="{{ category.id }}"
-{% if product.category.id == category.id %}
-selected
-{% endif %}
->
-{{ category.name }}
-</option>
-
-{% endfor %}
-
-</select>
-</div>
-
-
 <div class="row">
-
-<!-- Import price -->
-<div class="col-md-6">
+    <div class="col-md-6">
 <div class="form-group">
-<label>Giá nhập</label>
-<input type="number"
-       step="0.01"
-       name="import_price"
-       value="{{ product.import_price }}"
+<label>Mã số thuế</label>
+<input type="text"
+       name="tax_code"
+       value="{{ supplier.tax_code }}"
+       class="form-control">
+</div>
+    </div>
+
+    <div class="col-md-6">
+<div class="form-group">
+<label>Số DT</label>
+<input type="text"
+       name="phone"
+       value="{{ supplier.phone }}"
        class="form-control">
 </div>
 </div>
 
-<!-- Sell price -->
-<div class="col-md-6">
+
+
 <div class="form-group">
-<label>Giá bán</label>
-<input type="number"
-       step="0.01"
-       name="sell_price"
-       value="{{ product.sell_price }}"
+<label>Email</label>
+<input type="email"
+       name="email"
+       value="{{ supplier.email }}"
+        placeholder="Trống"
        class="form-control">
 </div>
+
+
 </div>
-
-</div>
-
-
-<div class="row">
-
-<!-- Quantity -->
-<div class="col-md-6">
 <div class="form-group">
-<label>Số lượng</label>
-<input type="number"
-       name="quantity_in_stock"
-       value="{{ product.quantity_in_stock }}"
+<label>Địa chỉ</label>
+<input type="text"
+       name="address"
+       value="{{ supplier.address }}"
+       placeholder="Trống"
        class="form-control">
 </div>
-</div>
-
-<!-- Min stock -->
-<div class="col-md-6">
-<div class="form-group">
-<label>Mức tồn tối thiểu</label>
-<input type="number"
-       name="min_stock_level"
-       value="{{ product.min_stock_level }}"
-       class="form-control">
-</div>
-</div>
-
-</div>
 
 
-<!-- Image upload -->
-<div class="form-group">
-<label>Ảnh sản phẩm</label>
 
-<input type="file"
-       name="image"
-       id="id_image"
-       class="form-control">
-
-
-<br>
-
-<!-- Image preview -->
-<img id="preview"
-     src="{{ product.image.url|default:'/static/images/no-image.jpg' }}"
-     width="150"
-     style="border:1px solid #ddd;padding:5px;border-radius:5px;">
-
-</div>
 
 
 <button class="btn btn-primary" type="submit">
 Update
 </button>
 
-<a href="{% url 'product_list' %}" class="btn btn-light">
+<a href="{% url 'supplier_page' %}" class="btn btn-light">
 Cancel
 </a>
 
@@ -142,18 +90,6 @@ Cancel
 </div>
 
 
-<script>
 
-document.getElementById("id_image").onchange = function(event){
-
-    const [file] = event.target.files
-
-    if(file){
-        document.getElementById("preview").src = URL.createObjectURL(file)
-    }
-
-}
-
-</script>
 
 {% endblock %}

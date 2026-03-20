@@ -59,7 +59,7 @@
 
           <!-- Button -->
           <div class="col-md-2 d-sm-flex justify-content-end align-items-end gap-1">
-            <a href="{% url 'create_import_order' %}">
+            <a href="{% url 'create_export_order' %}">
               <button class="btn btn-primary btn-md text-white">
                 <i class="mdi mdi-plus"></i> Tạo phiếu xuất
               </button>
@@ -74,9 +74,9 @@
             <thead>
               <tr>
                 <th>Mã phiếu</th>
-                <th>Nhà cung cấp</th>
+                <th>Khách hàng</th>
                 <th>Tổng tiền</th>
-                <th>Hóa đơn</th>
+
                 <th>Người tạo</th>
                 <th>Thời gian</th>
                 <th>Action</th>
@@ -84,19 +84,13 @@
             </thead>
 
             <tbody>
-              {% for order in import_orders %}
+              {% for order in export_orders %}
               <tr>
                 <td><h6>{{ order.code }}</h6></td>
-                <td><h6>{{ order.customer_name }}</h6></td>
+                <td><h6>{{ order.customer_name  }}</h6></td>
                 <td><h6 class="text-success">{{ order.total_amount }}</h6></td>
 
-                <td>
-                  {% if order.invoice_file %}
-                  <a href="{{ order.invoice_file.url }}" target="_blank">Xem hóa đơn</a>
-                  {% else %}
-                  Không có
-                  {% endif %}
-                </td>
+
 
                 <td><h6>{{ order.created_by.username }}</h6></td>
 
@@ -105,11 +99,11 @@
                 </td>
 
                 <td>
-                  <a href="{% url 'detail_import_order' order.id %}">
+                  <a href="{% url 'detail_export_order' order.id %}">
                     <button class="btn btn-info btn-sm">View</button>
                   </a>
 
-                  <a href="{% url 'delete_import_order' order.id %}">
+                  <a href="{% url 'delete_export_order' order.id %}">
                     <button class="btn btn-danger btn-sm">Delete</button>
                   </a>
                 </td>
