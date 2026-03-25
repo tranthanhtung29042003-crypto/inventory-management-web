@@ -17,7 +17,7 @@
           <div class="col-md-3">
             <h4 class="card-title card-title-dash">Danh sách phiếu xuất</h4>
             <p class="card-subtitle card-subtitle-dash">
-              Hiện có {{ export_orders.count }} phiếu xuất
+              Hiện có {{ import_orders.count }} phiếu xuất
             </p>
           </div>
 
@@ -87,8 +87,8 @@
               {% for order in import_orders %}
               <tr>
                 <td><h6>{{ order.code }}</h6></td>
-                <td><h6>{{ order.customer_name }}</h6></td>
-                <td><h6 class="text-success">{{ order.total_amount }}</h6></td>
+                <td><h6>{{ order.supplier }}</h6></td>
+                <td><h6 class="text-success">{{ order.total_amount|default:0 }}</h6></td>
 
                 <td>
                   {% if order.invoice_file %}
@@ -105,11 +105,11 @@
                 </td>
 
                 <td>
-                  <a href="{% url 'detail_import_order' order.id %}">
+                  <a href="{% url 'detail_import_order' order.code %}">
                     <button class="btn btn-info btn-sm">View</button>
                   </a>
 
-                  <a href="{% url 'delete_import_order' order.id %}">
+                  <a href="{% url 'delete_import_order' order.code %}">
                     <button class="btn btn-danger btn-sm">Delete</button>
                   </a>
                 </td>

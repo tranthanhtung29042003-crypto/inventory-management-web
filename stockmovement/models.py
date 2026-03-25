@@ -22,7 +22,7 @@ class StockMovement(models.Model):
 
     quantity = models.IntegerField()
 
-    reference_id = models.IntegerField(null=True, blank=True)
+    reference_code = models.CharField(null=False)
 
     note = models.TextField(null=True, blank=True)
 

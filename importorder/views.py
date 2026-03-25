@@ -1,4 +1,5 @@
 from django.db import transaction
+from django.db.models import F, Sum
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.conf import settings
@@ -13,9 +14,12 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
+from decimal import Decimal, InvalidOperation
 
 from product.models import Product
 from stockmovement.models import StockMovement
+
+from productwarehouse.models import ProductWarehouse
 
 font_path = os.path.join(settings.BASE_DIR, 'assets/fonts/Roboto/Roboto-Regular.ttf')
 
@@ -23,59 +27,89 @@ font_path = os.path.join(settings.BASE_DIR, 'assets/fonts/Roboto/Roboto-Regular.
 pdfmetrics.registerFont(TTFont('Roboto', font_path))
 
 def create_import_order(request):
-
     if request.method == "POST":
-
         form = ImportOrderForm(request.POST, request.FILES)
         formset = ImportOrderItemFormSet(request.POST)
 
         if form.is_valid() and formset.is_valid():
-
             try:
                 with transaction.atomic():
 
                     import_order = form.save(commit=False)
                     import_order.created_by = request.user
+                    import_order.total_amount = 0
                     import_order.save()
 
                     total_amount = 0
 
-                    warehouse = import_order.warehouse
+                    # ✅ KHÔNG dùng save(commit=False)
+                    for f in formset:
+                        if not f.cleaned_data or f.cleaned_data.get('DELETE'):
+                            continue
 
-                    items = formset.save(commit=False)
+                        product = f.cleaned_data.get('product')
+                        quantity = f.cleaned_data.get('quantity')
+                        price = f.cleaned_data.get('unit_price')
+                        warehouse = f.cleaned_data.get('warehouse')
 
-                    for item in items:
+                        # 🚨 bỏ dòng rỗng
+                        if not product or not quantity or not price:
+                            continue
+
+                        try:
+                            price = Decimal(price)
+                        except (InvalidOperation, TypeError):
+                            print("Sai unit_price:", price)
+                            continue
+
+                        # 🔥 tính tiền
+                        total_amount += quantity * price
+
+                        # ✅ save item
+                        item = f.save(commit=False)
                         item.import_order = import_order
                         item.save()
 
-                        total_amount += item.quantity * item.price
-
-                        pw, created = Product.objects.get_or_create(
-                            product=item.product,
+                        # 🔥 update tồn kho
+                        ProductWarehouse.objects.update_or_create(
+                            product=product,
                             warehouse=warehouse,
-                            defaults={"quantity":0}
+                            defaults={"quantity": 0}
                         )
-                        pw.quantity_in_stock += item.quantity
-                        pw.save()
 
+                        ProductWarehouse.objects.filter(
+                            product=product,
+                            warehouse=warehouse
+                        ).update(quantity=F('quantity') + quantity)
+                        total_stock = ProductWarehouse.objects.filter(
+                            product=product
+                        ).aggregate(total=Sum('quantity'))['total'] or 0
+
+                        product.quantity_in_stock = total_stock
+                        product.save()
+
+                        # 🔥 stock movement
                         StockMovement.objects.create(
-                            product=item.product,
-                            warehouse=  warehouse,
-                            quantity=item.quantity,
-                            type="IMPORT"
+                            product=product,
+                            reference_code=import_order.code,
+                            quantity=quantity,
+                            movement_type="IMPORT",
+                            created_by=request.user
                         )
 
-                        import_order.total_amount += total_amount
-                        import_order.save()
-
-                        for obj in formset.deleted_forms:
-                            obj.delete()
-
-
+                    import_order.total_amount = total_amount
+                    import_order.save()
 
                     return redirect("importorder_list")
-            except Exception as e:
-                print(e)
+
+            except Exception:
+                import traceback
+                traceback.print_exc()
+
+        else:
+            print("FORM ERROR:", form.errors)
+            print("FORMSET ERROR:", formset.errors)
+
     else:
         form = ImportOrderForm()
         formset = ImportOrderItemFormSet(queryset=ImportOrderItem.objects.none())
@@ -118,35 +152,35 @@ def import_order_list(request):
     })
 
 
-def detail_import_order(request, id):
+def detail_import_order(request,code):
     order = get_object_or_404(
         ImportOrder.objects.select_related(
             "supplier",
             "created_by"
         ).prefetch_related("items"),
-        id=id
+        code=code
     )
 
     return render(request, "import_order/detail_import_order.html", {
         "order": order
     })
 
-def delete_import_order(request, id):
+def delete_import_order(request, code):
     order = get_object_or_404(ImportOrder.objects.select_related(
             "supplier",
             "created_by"
         ).prefetch_related("items"),
-        id=id)
+        code=code)
     order.delete()
     return redirect("importorder_list")
 
 
-def export_pdf(request, id):
-    order = get_object_or_404(ImportOrder, id=id)
+def export_pdf(request, code):
+    order = get_object_or_404(ImportOrder, code = code)
 
 
     response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = f'attachment; filename="import_order_{order.id}.pdf"'
+    response['Content-Disposition'] = f'attachment; filename="import_order_{order.code}.pdf"'
 
     doc = SimpleDocTemplate(
         response,
