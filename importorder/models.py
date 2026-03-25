@@ -2,7 +2,9 @@ from django.conf import settings
 from django.db import models
 from supplier.models import Supplier
 
+
 from .services.generate_importoder_code import generate_importoder_code
+
 
 
 class ImportOrder(models.Model):
@@ -15,7 +17,7 @@ class ImportOrder(models.Model):
         on_delete=models.CASCADE
     )
 
-    total_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    total_amount = models.DecimalField(max_digits=12, decimal_places=2, default=0)
 
     note = models.CharField(max_length=200, blank=True, null=True)
 

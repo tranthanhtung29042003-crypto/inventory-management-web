@@ -1,3 +1,7 @@
+from decimal import Decimal, InvalidOperation
+
+from django.db import transaction
+from django.db.models import F, Sum
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.conf import settings
@@ -13,6 +17,10 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 
+from stockmovement.models import StockMovement
+
+from productwarehouse.models import ProductWarehouse
+
 font_path = os.path.join(settings.BASE_DIR, 'assets/fonts/Roboto/Roboto-Regular.ttf')
 
 
@@ -27,43 +35,95 @@ def create_export_order(request):
 
     if request.method == 'POST':
         if form.is_valid() and formset.is_valid():
+            try:
+                with transaction.atomic():
 
-            order = form.save(commit=False)
-            order.created_by = request.user
+                    order = form.save(commit=False)
+                    order.created_by = request.user
+                    order.total_amount = 0
+                    order.save()
 
-            total = 0
+                    total = 0
 
+                    for f in formset:
+                        if not f.cleaned_data or f.cleaned_data.get('DELETE'):
+                            continue
 
-            for f in formset:
-                if f.cleaned_data and not f.cleaned_data.get('DELETE', False):
-                    quantity = f.cleaned_data.get('quantity')
-                    price = f.cleaned_data.get('unit_price')
+                        # ✅ LẤY ProductWarehouse
+                        pw = f.cleaned_data.get('warehouse')  # ProductWarehouse
+                        quantity = f.cleaned_data.get('quantity')
+                        price = f.cleaned_data.get('unit_price')
 
-                    total += quantity * price
+                        if not pw or not quantity or not price:
+                            continue
 
+                        # ✅ ÉP product từ warehouse (tránh sai)
+                        product = pw.product
 
-            order.total_amount = total
-            order.save()
+                        try:
+                            price = Decimal(price)
+                        except (InvalidOperation, TypeError):
+                            continue
 
+                        # 🔥 LOCK ROW (chống race condition)
+                        pw = ProductWarehouse.objects.select_for_update().get(id=pw.id)
 
-            for f in formset:
-                if f.cleaned_data and not f.cleaned_data.get('DELETE', False):
-                    item = f.save(commit=False)
-                    item.export_order = order
+                        current_stock = pw.quantity
+                        print(f"{product.name} tồn: {current_stock}")
 
-                    product = item.product
-                    product.quantity_in_stock -= item.quantity
-                    product.save()
+                        # 🔥 CHECK tồn kho
+                        if current_stock < quantity:
+                            raise Exception(
+                                f"{product.name} chỉ còn {current_stock}, không đủ xuất"
+                            )
 
-                    item.save()
+                        # 🔥 TRỪ KHO
+                        pw.quantity -= quantity
+                        pw.save()
 
-            return redirect('export_order_list')
+                        # 🔥 SAVE ITEM
+                        item = f.save(commit=False)
+                        item.export_order = order
+                        item.product = product  # ✅ đảm bảo đúng product
+                        item.warehouse = pw     # ✅ giữ ProductWarehouse
+                        item.save()
+
+                        # 🔥 TÍNH TIỀN
+                        total += quantity * price
+
+                        # 🔥 STOCK MOVEMENT
+                        StockMovement.objects.create(
+                            product=product,
+                            reference_code=order.code,
+                            quantity=quantity,
+                            movement_type="EXPORT",
+                            created_by=request.user
+                        )
+
+                        # 🔥 UPDATE TỔNG KHO PRODUCT
+                        total_stock = ProductWarehouse.objects.filter(
+                            product=product
+                        ).aggregate(total=Sum('quantity'))['total'] or 0
+
+                        product.quantity_in_stock = total_stock
+                        product.save()
+
+                    order.total_amount = total
+                    order.save()
+
+                    return redirect('export_order_list')
+
+            except Exception as e:
+                print("ERROR:", e)
+
+        else:
+            print("FORM ERROR:", form.errors)
+            print("FORMSET ERROR:", formset.errors)
 
     return render(request, 'export_order/create_export_order.html', {
         'form': form,
         'formset': formset
     })
-
 def export_order_list(request):
 
     search = request.GET.get("search")
@@ -97,30 +157,30 @@ def export_order_list(request):
     })
 
 
-def detail_export_order(request, id):
+def detail_export_order(request, code):
     order = get_object_or_404(
         ExportOrder.objects.select_related(
-               "created_by"
+            "created_by"
         ).prefetch_related("items"),
-        id=id
+        code=code
     )
 
     return render(request, "export_order/detail_export_order.html", {
         "order": order
     })
 
-def delete_export_order(request, id):
+def delete_export_order(request, code):
     order = get_object_or_404(ExportOrder.objects.select_related(
 
             "created_by"
         ).prefetch_related("items"),
-        id=id)
+        code=code)
     order.delete()
     return redirect("exportorder_list")
 
 
-def export_pdf(request, id):
-    order = get_object_or_404(ExportOrder, id=id)
+def export_pdf(request, code):
+    order = get_object_or_404(ExportOrder, code=code)
 
 
     response = HttpResponse(content_type='application/pdf')
