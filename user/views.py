@@ -1,3 +1,4 @@
+from django.http import HttpResponseForbidden
 from django.utils import timezone
 
 from django.contrib.auth import authenticate, login,logout
@@ -7,6 +8,16 @@ from django.contrib.auth.decorators import login_required
 from .models import User
 from .services.check_exits_email import check_exist_email
 from .services.check_exits_username import check_exist_username
+
+def role_required(allowed_roles=[]):
+    def decorator(view_func):
+        def wrapper(request, *args, **kwargs):
+            if request.user.role in allowed_roles:
+                return view_func(request, *args, **kwargs)
+            return HttpResponseForbidden("Không có quyền")
+        return wrapper
+    return decorator
+
 
 
 # Create your views here.
@@ -55,7 +66,7 @@ def listloguser(request):
 
     return render(request, "blank_page.html")
 
-
+@role_required(["ADMIN", "MANAGER"])
 @login_required
 def edit_user(request, id):
 
@@ -83,7 +94,7 @@ def edit_user(request, id):
     return render(request, "user/edit_info_user.html", {"user": user})
 
 
-
+@role_required(["ADMIN", "MANAGER"])
 @login_required
 def add_new_user(request):
 
@@ -110,7 +121,7 @@ def add_new_user(request):
     return render(request, "user/add_new_user.html")
 
 
-
+@role_required(["ADMIN", "MANAGER"])
 @login_required
 def delete_user(request, id):
     user = get_object_or_404(User, id=id)
@@ -119,3 +130,6 @@ def delete_user(request, id):
         return redirect("dashboard")
 
     return render(request, "user/dashboard.html")
+
+
+

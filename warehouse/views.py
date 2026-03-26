@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect,get_object_or_404
 
 from django.contrib.auth.decorators import login_required
 from .models import Warehouse
-
+from user.views import role_required
 
 
 def warehouse_page(request):
@@ -18,13 +18,15 @@ def warehouse_page(request):
         return redirect("warehouse_page")
 
     return render(request, "warehouse/warehouse.html", {"warehouse": warehouse})
-
+@role_required(["ADMIN", "MANAGER","ACCOUNTANT"])
+@login_required
 def delete_warehouse(request, id):
     warehouse = get_object_or_404(Warehouse, pk=id)
     warehouse.delete()
 
     return redirect("warehouse_page")
-
+@role_required(["ADMIN", "MANAGER","ACCOUNTANT"])
+@login_required
 def update_warehouse(request, id):
     warehouse = get_object_or_404(Warehouse, pk=id)
 
