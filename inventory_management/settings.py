@@ -47,7 +47,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     'mptt',
-    
+
+    'dashboard',
     'user',
     'category',
     'exportorder',
@@ -58,7 +59,8 @@ INSTALLED_APPS = [
     'productwarehouse',
     'stockmovement',
     'supplier',
-    'warehouse'
+    'warehouse',
+    'activitylog'
 ]
 AUTH_USER_MODEL = "user.User"
 LOGIN_URL = "login"
@@ -72,6 +74,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+
+'middleware.current_user_middleware.CurrentUserMiddleware',
 ]
 
 ROOT_URLCONF = 'inventory_management.urls'

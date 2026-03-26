@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.db.models import F, Sum
 from django.http import HttpResponse
@@ -25,7 +26,7 @@ font_path = os.path.join(settings.BASE_DIR, 'assets/fonts/Roboto/Roboto-Regular.
 
 
 pdfmetrics.registerFont(TTFont('Roboto', font_path))
-
+@login_required
 def create_import_order(request):
     if request.method == "POST":
         form = ImportOrderForm(request.POST, request.FILES)
@@ -118,7 +119,7 @@ def create_import_order(request):
         "form": form,
         "formset": formset
     })
-
+@login_required
 def import_order_list(request):
 
     search = request.GET.get("search")
@@ -151,7 +152,7 @@ def import_order_list(request):
         "import_orders": import_orders
     })
 
-
+@login_required
 def detail_import_order(request,code):
     order = get_object_or_404(
         ImportOrder.objects.select_related(
@@ -164,7 +165,7 @@ def detail_import_order(request,code):
     return render(request, "import_order/detail_import_order.html", {
         "order": order
     })
-
+@login_required
 def delete_import_order(request, code):
     order = get_object_or_404(ImportOrder.objects.select_related(
             "supplier",
@@ -174,7 +175,7 @@ def delete_import_order(request, code):
     order.delete()
     return redirect("importorder_list")
 
-
+@login_required
 def export_pdf(request, code):
     order = get_object_or_404(ImportOrder, code = code)
 

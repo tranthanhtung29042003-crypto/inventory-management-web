@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Q
@@ -12,7 +13,7 @@ from product.forms import ProductForm
 
 # Create your views here.
 
-
+@login_required
 def add_product(request):
 
     if request.method == "POST":
@@ -29,7 +30,7 @@ def add_product(request):
 
     return render(request, "product/add_new_product.html", {"form": form, "categories": Category.objects.all()})
 
-
+@login_required
 def product_list(request):
     search = request.GET.get("search")
     category_id = request.GET.get("category")
@@ -46,12 +47,12 @@ def product_list(request):
     categories = Category.objects.all()
 
     return render(request, "product/list_product.html", {"listproduct": products,   "categories": categories})
-
+@login_required
 def delete_product(request, id):
     product = get_object_or_404(Product,id = id)
     product.delete()
     return redirect("product_list")
-
+@login_required
 def update_product(request, id):
 
     product = get_object_or_404(Product, id=id)
@@ -88,7 +89,7 @@ def update_product(request, id):
         }
     )
 
-
+@login_required
 def export_product_excel(request):
     products = Product.objects.all()
 

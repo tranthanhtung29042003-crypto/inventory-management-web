@@ -1,5 +1,6 @@
 from decimal import Decimal, InvalidOperation
 
+from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.db.models import F, Sum
 from django.http import HttpResponse
@@ -21,11 +22,14 @@ from stockmovement.models import StockMovement
 
 from productwarehouse.models import ProductWarehouse
 
+from user.views import role_required
+
 font_path = os.path.join(settings.BASE_DIR, 'assets/fonts/Roboto/Roboto-Regular.ttf')
 
 
 pdfmetrics.registerFont(TTFont('Roboto', font_path))
-
+@role_required(["ADMIN", "MANAGER",])
+@login_required
 def create_export_order(request):
     form = ExportOrderForm(request.POST or None)
     formset = ExportOrderItemFormSet(
@@ -124,6 +128,9 @@ def create_export_order(request):
         'form': form,
         'formset': formset
     })
+
+
+@login_required
 def export_order_list(request):
 
     search = request.GET.get("search")
@@ -156,7 +163,7 @@ def export_order_list(request):
         "export_orders": export_orders
     })
 
-
+@login_required
 def detail_export_order(request, code):
     order = get_object_or_404(
         ExportOrder.objects.select_related(
@@ -168,7 +175,7 @@ def detail_export_order(request, code):
     return render(request, "export_order/detail_export_order.html", {
         "order": order
     })
-
+@login_required
 def delete_export_order(request, code):
     order = get_object_or_404(ExportOrder.objects.select_related(
 
@@ -178,7 +185,7 @@ def delete_export_order(request, code):
     order.delete()
     return redirect("exportorder_list")
 
-
+@login_required
 def export_pdf(request, code):
     order = get_object_or_404(ExportOrder, code=code)
 
