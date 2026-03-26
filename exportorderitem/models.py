@@ -2,10 +2,15 @@ from django.db import models
 from django.core.validators import MinValueValidator
 from django.core.exceptions import ValidationError
 from exportorder.models import ExportOrder
+
+
+from productwarehouse.models import ProductWarehouse
+
 from product.models import Product
 
 
 class ExportOrderItem(models.Model):
+
     export_order = models.ForeignKey(
         ExportOrder,
         on_delete=models.CASCADE,
@@ -13,6 +18,8 @@ class ExportOrderItem(models.Model):
     )
 
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
+
+    warehouse = models.ForeignKey(ProductWarehouse, on_delete=models.CASCADE)
 
     quantity = models.IntegerField(
         default=1,
@@ -29,11 +36,18 @@ class ExportOrderItem(models.Model):
         return self.quantity * self.unit_price
 
     def clean(self):
-        if self.product and self.quantity:
-            if self.product.quantity_in_stock < self.quantity:
+        if self.warehouse and self.quantity:
+
+            stock = self.warehouse.quantity  # ✅ lấy trực tiếp
+
+            if self.quantity > stock:
                 raise ValidationError(
-                    f"{self.product.name} không đủ tồn kho"
+                    f"{self.warehouse.product.name} chỉ còn {stock} trong kho"
                 )
+
+    def save(self, *args, **kwargs):
+        self.full_clean()  # 🔥 đảm bảo validation chạy
+        super().save(*args, **kwargs)
 
     class Meta:
         indexes = [

@@ -80,16 +80,27 @@
             <td>{{ h.product.name }}</td>
 
             <td>
-    {% if h.stock_history == "IMPORT" %}
+    {% if h.movement_type == "IMPORT" %}
         <span style="color:green;">IMPORT</span>
-    {% elif h.stock_history == "EXPORT" %}
+    {% elif h.movement_type == "EXPORT" %}
         <span style="color:red;">EXPORT</span>
-    {% elif h.stock_history == "ADJUST" %}
+    {% elif h.movement_type == "ADJUST" %}
         <span style="color:orange;">ADJUST</span>
     {% endif %}
 </td>
 
-            <td>{{ h.get_action_display }}</td>
+            <td>
+                {% if h.movement_type == "IMPORT" %}
+        <a href="{% url 'detail_import_order' h.reference_code %}">
+        {{ h.reference_code }}
+    </a>
+    {% elif h.movement_type == "EXPORT" %}
+       <a href="{% url 'detail_export_order' h.reference_code %}">
+        {{ h.reference_code }}
+    </a>
+{% endif %}
+
+</td>
             <td>{{ h.note }}</td>
             <td>{{ h.created_at }}</td>
         </tr>

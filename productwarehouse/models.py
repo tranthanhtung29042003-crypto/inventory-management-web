@@ -9,3 +9,6 @@ class ProductWarehouse(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     warehouse = models.ForeignKey(Warehouse, on_delete=models.CASCADE)
     quantity = models.IntegerField(default=0)
+
+    def __str__(self):
+        return f"{self.product.name} - {self.warehouse.name} (Tồn: {self.quantity})"

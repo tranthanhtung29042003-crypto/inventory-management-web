@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.shortcuts import render, redirect, get_object_or_404
 
@@ -6,12 +7,13 @@ from stockmovement.models import StockMovement
 
 
 # Create your views here.
-
+@login_required
 def stock_history(request):
     histories = StockMovement.objects.select_related('product').order_by('-created_at')
     return render(request, 'stock_history/stock_history.html', {'histories': histories})
 
 
+@login_required
 def import_product(request, id):
     product = get_object_or_404(Product, id=id)
     qty = int(request.POST.get('qty', 0))
@@ -19,7 +21,7 @@ def import_product(request, id):
     handle_stock(product, qty, 'IMPORT')
 
     return redirect('product_detail', id=id)
-
+@login_required
 def export_product(request, id):
     product = get_object_or_404(Product, id=id)
     qty = int(request.POST.get('qty', 0))
@@ -32,7 +34,7 @@ def export_product(request, id):
         })
 
     return redirect('product_detail', id=id)
-
+@login_required
 def handle_stock(product, qty, movement_type):
     with transaction.atomic():
 

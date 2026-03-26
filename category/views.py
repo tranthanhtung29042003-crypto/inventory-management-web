@@ -5,8 +5,9 @@ from django.shortcuts import render, redirect,get_object_or_404
 
 from django.contrib.auth.decorators import login_required
 from .models import Category
+from user.views import role_required
 
-
+@role_required(["ADMIN", "MANAGER","ACCOUNTANT"])
 @login_required
 def listcagegoryview(request):
     if request.method == "GET":
@@ -15,7 +16,7 @@ def listcagegoryview(request):
 
 
     return render(request, "blank_page.html")
-
+@role_required(["ADMIN", "MANAGER"])
 @login_required
 def add_category(request):
 
@@ -44,7 +45,7 @@ def add_category(request):
 
 
 
-
+@role_required(["ADMIN", "MANAGER"])
 @login_required
 def delete_category(request, id):
     category = get_object_or_404(Category, id=id)
